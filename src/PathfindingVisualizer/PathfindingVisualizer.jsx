@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathfindingVisualizer.css";
+import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
 const START_NODE_ROW = 10,
   START_NODE_COL = 15,
   FINISH_NODE_ROW = 10,
@@ -12,7 +13,7 @@ export class PathfindingVisualizer extends Component {
   };
   componentDidMount() {
     const grid = this.getInitialGrid();
-    console.log(grid);
+    // console.log(grid);
     this.setState({ grid });
   }
   //mouse is pressed and not lifted up
@@ -55,6 +56,7 @@ export class PathfindingVisualizer extends Component {
   };
   createNode = (col, row) => {
     return {
+      isVisited: false,
       col,
       row,
       isStart: row === START_NODE_ROW && col === START_NODE_COL,
@@ -64,33 +66,83 @@ export class PathfindingVisualizer extends Component {
       previousNode: null
     };
   };
+  animateDijsktra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          this.animateShortestPath(nodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-visited";
+      }, 10 * i);
+    }
+  };
+  animateShortestPath = nodesInShortestPathOrder => {
+    // console.log("shortest path");
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPathOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-shortest-path";
+      }, 50 * i);
+    }
+  };
+  visualizeDijkstra = () => {
+    const { grid } = this.state;
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+    // console.log(startNode, finishNode);
+    const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+    // console.log(visitedNodesInOrder);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
+  };
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
-      <div className="grid">
-        {grid.map((row, rowIdx) => {
-          return (
-            <div key={rowIdx}>
-              {row.map((node, nodeIdx) => {
-                const { row, col, isStart, isFinish, isWall } = node;
-                return (
-                  <Node
-                    key={nodeIdx}
-                    col={col}
-                    row={row}
-                    mouseIsPressed={mouseIsPressed}
-                    isWall={isWall}
-                    isStart={isStart}
-                    isFinish={isFinish}
-                    onMouseUp={() => this.handleMouseUp()}
-                    onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                    onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-                  ></Node>
-                );
-              })}
-            </div>
-          );
-        })}
+      <div>
+        <button onClick={() => this.visualizeDijkstra()}>
+          Visualize Dijkstra Algorithm!
+        </button>
+        <div className="grid">
+          {grid.map((row, rowIdx) => {
+            return (
+              <div key={rowIdx}>
+                {row.map((node, nodeIdx) => {
+                  const {
+                    row,
+                    col,
+                    isStart,
+                    isFinish,
+                    isWall,
+                    isVisited
+                  } = node;
+                  return (
+                    <Node
+                      isVisited={isVisited}
+                      key={nodeIdx}
+                      col={col}
+                      row={row}
+                      mouseIsPressed={mouseIsPressed}
+                      isWall={isWall}
+                      isStart={isStart}
+                      isFinish={isFinish}
+                      onMouseUp={() => this.handleMouseUp()}
+                      onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                      onMouseEnter={(row, col) =>
+                        this.handleMouseEnter(row, col)
+                      }
+                    ></Node>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
