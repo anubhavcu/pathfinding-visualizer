@@ -3,13 +3,13 @@
 // previous node, effectively allowing us to compute the shortest path
 // by backtracking from the finish node.
 export function dijkstra(grid, startNode, finishNode) {
+  console.log(startNode, finishNode);
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   const unvisitedNodes = getAllNodes(grid);
-  // console.log(unvisitedNodes);
   while (unvisitedNodes.length) {
     sortNodesByDistance(unvisitedNodes);
-    //after sorting closest node can be any of the four/three/two/one options as we are updating all the neighbors(of a node) distance by 1.
+    //after sorting closest node can be any of the four/three/two/one options as we are updating all the neighbors(of a node) distance by +1.
     //
     const closestNode = unvisitedNodes.shift();
     // console.log(closestNode.isVisited);
@@ -47,9 +47,8 @@ function getUnvisitedNeighbors(node, grid) {
   if (col > 0) neighbors.push(grid[row][col - 1]);
   //to check if the element is not in the far right, in the last col(we are selecting the right side neighbor)
   if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
-  //can try this also for right neighbor
-  // if (col < grid.length - 1) neighbors.push(grid[row][col + 1]);
-  //
+  //  // if (col < grid.length - 1) neighbors.push(grid[row][col + 1]); -- this will compare the
+  //col value with grid.length which is total row value, we want to check with col value
 
   //then filter among them whichever is unvisited
   //so unvisitedNeighbors in getUnvisitedNeighbors function will not always get 4 neighbors
@@ -87,6 +86,7 @@ function getAllNodes(grid) {
 export function getNodesInShortestPathOrder(finishNode) {
   const nodesInShortestPathOrder = [];
   let currentNode = finishNode;
+  //current node will be null it is equal to startNode
   while (currentNode !== null) {
     nodesInShortestPathOrder.unshift(currentNode);
     currentNode = currentNode.previousNode;
