@@ -108,6 +108,7 @@ export class PathfindingVisualizer extends Component {
       // draggingFinish = false;
     }
     this.setState({ mouseIsPressed: false });
+    //resetting the dragging start/finish when mouse is lifted up
     draggingStart = false;
     draggingFinish = false;
   };
@@ -120,7 +121,11 @@ export class PathfindingVisualizer extends Component {
       isStart: !node.isStart,
       //maybe due to mouse click problem wall is set to true and we are not getting anything
       //in the visitedNodesInOrder from the dijkstra
+      // *isWall is set to false also bcoz, in case we put walls first and then move the start/finish node on that wall
+
       isWall: false
+      // distance: Infinity
+      //distance setting to infinity not working, alternative is clearPath function
     };
     newGrid[row][col] = newNode;
     startNode.row = row;
@@ -134,6 +139,7 @@ export class PathfindingVisualizer extends Component {
       ...node,
       isFinish: !node.isFinish,
       isWall: false
+      // distance: Infinity
     };
     newGrid[row][col] = newNode;
     finishNode.row = row;
@@ -184,22 +190,57 @@ export class PathfindingVisualizer extends Component {
       }
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          "node node-visited";
+        //if statement to avoid coloring of start and finish node
+        if (!(node.isStart || node.isFinish)) {
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            "node node-visited";
+          // this.persistColor();
+        }
       }, 10 * i);
     }
   };
   animateShortestPath = nodesInShortestPathOrder => {
-    // console.log("shortest path");
+    console.log(nodesInShortestPathOrder);
+    // if (nodesInShortestPathOrder.length === 1) {
+    //   alert("No Path Found ...!!");
+    //   return;
+    // }
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          "node node-shortest-path";
+        if (!(node.isStart || node.isFinish)) {
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            "node node-shortest-path";
+          // this.persistColor();
+        }
       }, 50 * i);
     }
   };
+  // persistColor = () => {
+  //   document
+  //     .getElementById(`node-${startNode.row}-${startNode.col}`)
+  //     .classList.remove("node-visited");
+  //   document
+  //     .getElementById(`node-${startNode.row}-${startNode.col}`)
+  //     .classList.remove("node-shortest-path");
+  //   document.getElementById(
+  //     `node-${startNode.row}-${startNode.col}`
+  //   ).style.backgroundColor = "green";
+  //   document
+  //     .getElementById(`node-${finishNode.row}-${finishNode.col}`)
+  //     .classList.remove("node-visited");
+  //   document
+  //     .getElementById(`node-${finishNode.row}-${finishNode.col}`)
+  //     .classList.remove("node-shortest-path");
+  //   document.getElementById(
+  //     `node-${finishNode.row}-${finishNode.col}`
+  //   ).style.backgroundColor = "red";
+  // };
   visualizeDijkstra = () => {
+    //just to make sure that when visualize dijkstra button is clicked path is cleared so that in case we move the start Node without clearing the board algorithm starts from a new startPoint
+    //*if we don't clearPath dijkstra algorithm will start from the node whose distance is minimum and in the algorithms we have set the distance of startNode as 0(initially), so when we don't call clearPath function(in which we reset all the distance back to Infinity), and move the startNode to a new Point,visualization starts from the previous node only.
+    this.clearPath();
+    // console.log(startNode, finishNode);
     const { grid } = this.state;
     // const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const start = grid[startNode.row][startNode.col];
@@ -212,6 +253,68 @@ export class PathfindingVisualizer extends Component {
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finish);
     this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
   };
+  // clearPath = () => {
+  //   const { grid } = this.state;
+  //   const newGrid = grid.slice();
+  //   for (let i = 0; i < newGrid.length; i++) {
+  //     for (let j = 0; j < newGrid[i].length; j++) {
+  //       if (!(newGrid[i][j].isStart || newGrid[i][j].isFinish)) {
+  //         newGrid[i][j].isVisited = false;
+  //         // newGrid[i][j].distance = Infinity;
+  //         // newGrid[i][j].isWall = false;
+  //         // newGrid[i][j].previousNode = null;
+  //         const element = document.getElementById(`node-${i}-${j}`);
+  //         element.classList.remove("node-visited");
+  //         element.classList.remove("node-shortest-path");
+  //       } else {
+  //         // newGrid[i][j].isStart = newGrid[i][j].isStart;
+  //         // newGrid[i][j].isFinish = newGrid[i][j].isFinish;
+  //         // newGrid[startNode.row][startNode.col].isStart = true;
+  //       }
+  //     }
+  //   }
+  //   this.setState({ grid: newGrid });
+  // };
+  clearBoard = () => {
+    // console.log(startNode, finishNode);
+    const { grid } = this.state;
+    const newGrid = grid.slice();
+    // console.log(newGrid[startNode.row][startNode.col]);
+    for (let i = 0; i < newGrid.length; i++) {
+      for (let j = 0; j < newGrid[i].length; j++) {
+        // console.log(newGrid[i][j]);
+        const element = document.getElementById(`node-${i}-${j}`);
+        element.classList.remove("node-visited");
+        element.classList.remove("node-shortest-path");
+        //clearing class node-wall is optional(working fine otherwise also)
+        element.classList.remove("node-wall");
+
+        newGrid[i][j].isVisited = false;
+        newGrid[i][j].distance = Infinity;
+        newGrid[i][j].isWall = false;
+        newGrid[i][j].previousNode = null;
+      }
+    }
+    this.setState({ grid: newGrid });
+  };
+  clearPath = () => {
+    // console.log(startNode, finishNode);
+    const { grid } = this.state;
+    const newGrid = grid.slice();
+    // console.log(newGrid[startNode.row][startNode.col]);
+    for (let i = 0; i < newGrid.length; i++) {
+      for (let j = 0; j < newGrid[i].length; j++) {
+        // console.log(newGrid[i][j]);
+        const element = document.getElementById(`node-${i}-${j}`);
+        element.classList.remove("node-visited");
+        element.classList.remove("node-shortest-path");
+        newGrid[i][j].isVisited = false;
+        newGrid[i][j].distance = Infinity;
+        newGrid[i][j].previousNode = null;
+      }
+    }
+    this.setState({ grid: newGrid });
+  };
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
@@ -219,6 +322,8 @@ export class PathfindingVisualizer extends Component {
         <button onClick={() => this.visualizeDijkstra()}>
           Visualize Dijkstra Algorithm!
         </button>
+        <button onClick={() => this.clearBoard()}>Clear Board</button>
+        <button onClick={() => this.clearPath()}>Clear Path</button>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
