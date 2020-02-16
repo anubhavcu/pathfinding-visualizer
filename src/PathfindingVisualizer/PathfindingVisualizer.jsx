@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathfindingVisualizer.css";
 import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
+import { astar, getNodesInShortestPathOrderAstar } from "../algorithms/astar";
+
 const START_NODE_ROW = 10,
   START_NODE_COL = 15,
   FINISH_NODE_ROW = 10,
@@ -200,7 +202,7 @@ export class PathfindingVisualizer extends Component {
     }
   };
   animateShortestPath = nodesInShortestPathOrder => {
-    console.log(nodesInShortestPathOrder);
+    // console.log(nodesInShortestPathOrder);
     // if (nodesInShortestPathOrder.length === 1) {
     //   alert("No Path Found ...!!");
     //   return;
@@ -315,6 +317,36 @@ export class PathfindingVisualizer extends Component {
     }
     this.setState({ grid: newGrid });
   };
+  animateAstar = (visitedNodesInOrder, nodesInShortestPathOrder) => {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          this.animateShortestPath(nodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        //if statement to avoid coloring of start and finish node
+        if (!(node.isStart || node.isFinish)) {
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            "node node-visited";
+          // this.persistColor();
+        }
+      }, 10 * i);
+    }
+  };
+  visualizeAstar = () => {
+    this.clearPath();
+    const { grid } = this.state;
+    const start = grid[startNode.row][startNode.col];
+    const finish = grid[finishNode.row][finishNode.col];
+    const visitedNodesInOrder = astar(grid, start, finish);
+    console.log(visitedNodesInOrder);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(finish);
+    // console.log(nodesInShortestPathOrder);
+    this.animateAstar(visitedNodesInOrder, nodesInShortestPathOrder);
+  };
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
@@ -324,6 +356,9 @@ export class PathfindingVisualizer extends Component {
         </button>
         <button onClick={() => this.clearBoard()}>Clear Board</button>
         <button onClick={() => this.clearPath()}>Clear Path</button>
+        <button onClick={() => this.visualizeAstar()}>
+          Visualize Astar Algorithm!
+        </button>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (

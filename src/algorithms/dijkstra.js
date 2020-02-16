@@ -3,16 +3,17 @@
 // previous node, effectively allowing us to compute the shortest path
 // by backtracking from the finish node.
 export function dijkstra(grid, startNode, finishNode) {
-  console.log(startNode, finishNode);
+  // console.log(startNode, finishNode);
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   const unvisitedNodes = getAllNodes(grid);
   while (unvisitedNodes.length) {
+    // console.log(unvisitedNodes);
     sortNodesByDistance(unvisitedNodes);
     //after sorting closest node can be any of the four/three/two/one options as we are updating all the neighbors(of a node) distance by +1.
     //
     const closestNode = unvisitedNodes.shift();
-    // console.log(closestNode.isVisited);
+    // console.log(closestNode);
     // console.log("closest node", closestNode);
     // console.log(unvisitedNodes);
     //if we encounter a wall we don't do anything
@@ -60,6 +61,7 @@ function getUnvisitedNeighbors(node, grid) {
 
 function sortNodesByDistance(unvisitedNodes) {
   unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
+  // console.log(unvisitedNodes);
 }
 function getAllNodes(grid) {
   const nodes = [];
