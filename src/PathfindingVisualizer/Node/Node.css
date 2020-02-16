@@ -13,6 +13,9 @@
 .node-wall {
   background-color: rgb(12, 53, 71);
 }
+.node-bomb {
+  background-color: purple;
+}
 
 /* lagging on wall animation- check it later */
 /* .node-wall {

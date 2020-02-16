@@ -11,7 +11,8 @@ export class Node extends Component {
       isWall,
       onMouseUp,
       onMouseEnter,
-      onMouseDown
+      onMouseDown,
+      isBomb
     } = this.props;
     const extraClassName = isFinish
       ? "node-finish"
@@ -19,6 +20,8 @@ export class Node extends Component {
       ? "node-start"
       : isWall
       ? "node-wall"
+      : isBomb
+      ? "node-bomb"
       : "";
     return (
       <div

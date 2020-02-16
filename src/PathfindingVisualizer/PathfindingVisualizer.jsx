@@ -7,7 +7,9 @@ import { astar, getNodesInShortestPathOrderAstar } from "../algorithms/astar";
 const START_NODE_ROW = 10,
   START_NODE_COL = 15,
   FINISH_NODE_ROW = 10,
-  FINISH_NODE_COL = 35;
+  FINISH_NODE_COL = 35,
+  BOMB_NODE_ROW = 10,
+  BOMB_NODE_COL = 25;
 const startNode = {
   row: START_NODE_ROW,
   col: START_NODE_COL
@@ -15,6 +17,11 @@ const startNode = {
 const finishNode = {
   row: FINISH_NODE_ROW,
   col: FINISH_NODE_COL
+};
+const bombNode = {
+  row: BOMB_NODE_ROW,
+  col: BOMB_NODE_COL,
+  status: false
 };
 let draggingStart = false,
   draggingFinish = false;
@@ -180,6 +187,8 @@ export class PathfindingVisualizer extends Component {
       distance: Infinity,
       isWall: false,
       previousNode: null
+      // isBomb: row === BOMB_NODE_ROW && col === BOMB_NODE_COL
+      // isBomb: this.bombNode.status
     };
   };
   animateDijsktra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
@@ -347,6 +356,41 @@ export class PathfindingVisualizer extends Component {
     // console.log(nodesInShortestPathOrder);
     this.animateAstar(visitedNodesInOrder, nodesInShortestPathOrder);
   };
+  // triggerBombNode = () => {
+  //   bombNode.status = !bombNode.status;
+  //   return bombNode.status;
+  // };
+  addBomb = () => {
+    // this.triggerBombNode(bombNode);
+    console.log(bombNode.row, bombNode.col);
+    const { grid } = this.state;
+    for (const row of grid) {
+      for (const node of row) {
+        if (node.row === bombNode.row && node.col === bombNode.col) {
+          node.bombNode = true;
+          // document.getElementById(`node-${node.row}-${node.col}`).className =
+          //   "node-bomb";
+        } else {
+          node.bombNode = false;
+        }
+      }
+    }
+    document.getElementById(`node-${bombNode.row}-${bombNode.col}`).className =
+      "node node-bomb";
+    console.log(grid);
+  };
+  removeBomb = () => {
+    const { grid } = this.state;
+    for (const row of grid) {
+      for (const node of row) {
+        node.bombNode = false;
+      }
+    }
+    const element = document.getElementById(
+      `node-${bombNode.row}-${bombNode.col}`
+    );
+    element.classList.remove("node-bomb");
+  };
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
@@ -359,6 +403,8 @@ export class PathfindingVisualizer extends Component {
         <button onClick={() => this.visualizeAstar()}>
           Visualize Astar Algorithm!
         </button>
+        <button onClick={() => this.addBomb()}>Add Bomb!</button>
+        <button onClick={() => this.removeBomb()}>Remove Bomb!</button>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
@@ -370,10 +416,12 @@ export class PathfindingVisualizer extends Component {
                     isStart,
                     isFinish,
                     isWall,
-                    isVisited
+                    isVisited,
+                    isBomb
                   } = node;
                   return (
                     <Node
+                      isBomb={isBomb}
                       isVisited={isVisited}
                       key={nodeIdx}
                       col={col}
