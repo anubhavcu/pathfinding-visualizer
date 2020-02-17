@@ -18,13 +18,15 @@ const finishNode = {
   row: FINISH_NODE_ROW,
   col: FINISH_NODE_COL
 };
-const bombNode = {
+let bombNode = {
   row: BOMB_NODE_ROW,
   col: BOMB_NODE_COL,
   status: false
 };
+let bomb = false;
 let draggingStart = false,
-  draggingFinish = false;
+  draggingFinish = false,
+  draggingBomb = false;
 export class PathfindingVisualizer extends Component {
   state = {
     grid: [],
@@ -59,6 +61,14 @@ export class PathfindingVisualizer extends Component {
       );
       this.setState({ grid: newGrid, mouseIsPressed: false });
       draggingFinish = true;
+    } else if (node.row === bombNode.row && node.col === bombNode.col) {
+      const newGrid = this.getNewGridWithBombNodeToggled(
+        this.state.grid,
+        row,
+        col
+      );
+      this.setState({ grid: newGrid, mouseIsPressed: false });
+      draggingBomb = true;
     } else {
       const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
       this.setState({ grid: newGrid, mouseIsPressed: true });
@@ -76,26 +86,6 @@ export class PathfindingVisualizer extends Component {
     // if (!draggingStart || !draggingFinish) {
     const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
     this.setState({ grid: newGrid });
-    // } else {
-    //   if (draggingStart) {
-    //     const newGrid = this.getNewGridWithStartNodeToggled(
-    //       this.state.grid,
-    //       row,
-    //       col
-    //     );
-    //     this.setState({ grid: newGrid });
-    //     // draggingStart = false;
-    //   } else if (draggingFinish) {
-    //     const newGrid = this.getNewGridWithFinishNodeToggled(
-    //       this.state.grid,
-    //       row,
-    //       col
-    //     );
-    //     this.setState({ grid: newGrid });
-    //     // draggingFinish = false;
-    //   }
-    // }
-    // }
   };
   //when pressed mouse button is released
   handleMouseUp = (row, col) => {
@@ -115,13 +105,41 @@ export class PathfindingVisualizer extends Component {
       );
       this.setState({ grid: newGrid });
       // draggingFinish = false;
+    } else if (draggingBomb) {
+      const newGrid = this.getNewGridWithBombNodeToggled(
+        this.state.grid,
+        row,
+        col
+      );
+      this.setState({ grid: newGrid });
     }
     this.setState({ mouseIsPressed: false });
     //resetting the dragging start/finish when mouse is lifted up
     draggingStart = false;
     draggingFinish = false;
+    draggingBomb = false;
   };
+  getNewGridWithBombNodeToggled = (grid, row, col) => {
+    console.log("bom node toggle");
 
+    const newGrid = grid.slice();
+    console.log(newGrid);
+    const node = newGrid[row][col];
+    console.log(node);
+    const newNode = {
+      ...node,
+      isBomb: !node.isBomb,
+      isWall: false
+    };
+    const element = document.getElementById(
+      `node-${bombNode.row}-${bombNode.col}`
+    );
+    element.classList.remove("node-bomb");
+    newGrid[row][col] = newNode;
+    bombNode.row = row;
+    bombNode.col = col;
+    return newGrid;
+  };
   getNewGridWithStartNodeToggled = (grid, row, col) => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
@@ -186,7 +204,8 @@ export class PathfindingVisualizer extends Component {
       isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
       distance: Infinity,
       isWall: false,
-      previousNode: null
+      previousNode: null,
+      isBomb: false
       // isBomb: row === BOMB_NODE_ROW && col === BOMB_NODE_COL
       // isBomb: this.bombNode.status
     };
@@ -362,12 +381,15 @@ export class PathfindingVisualizer extends Component {
   // };
   addBomb = () => {
     // this.triggerBombNode(bombNode);
-    console.log(bombNode.row, bombNode.col);
+    // bomb = true;
+    // console.log(bombNode.row, bombNode.col);
     const { grid } = this.state;
     for (const row of grid) {
       for (const node of row) {
         if (node.row === bombNode.row && node.col === bombNode.col) {
-          node.bombNode = true;
+          // if (node.row === 10 && node.col === 25) {
+          // node.bombNode = true;
+          node.isBomb = true;
           // document.getElementById(`node-${node.row}-${node.col}`).className =
           //   "node-bomb";
         } else {
@@ -377,13 +399,14 @@ export class PathfindingVisualizer extends Component {
     }
     document.getElementById(`node-${bombNode.row}-${bombNode.col}`).className =
       "node node-bomb";
-    console.log(grid);
+    // console.log(grid);
   };
   removeBomb = () => {
+    // bomb = false;
     const { grid } = this.state;
     for (const row of grid) {
       for (const node of row) {
-        node.bombNode = false;
+        node.isBomb = false;
       }
     }
     const element = document.getElementById(
