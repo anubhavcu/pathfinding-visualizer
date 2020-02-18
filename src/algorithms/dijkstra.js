@@ -39,7 +39,7 @@ export function dijkstra(grid, startNode, finishNode) {
     // console.log(visitedNodesInOrder);
   }
 }
-export function dijkstraToBomb(grid, startNode, finishNode, lastNode) {
+export function dijkstraToBomb(grid, startNode, finishNode) {
   // console.log(startNode, finishNode);
   // // console.log(grid);
   // const bombNodePresent = checkBombNode(grid);
@@ -68,6 +68,12 @@ export function dijkstraToBomb(grid, startNode, finishNode, lastNode) {
     //we must be trapped and should stop
     if (closestNode.distance === Infinity) return visitedNodesInOrder;
     closestNode.isVisited = true;
+    if (closestNode !== startNode) {
+      const element = document.getElementById(
+        `node-${closestNode.row}-${closestNode.col}`
+      );
+      element.className = "node node-visiting-bomb";
+    }
     // console.log(closestNode);
     visitedNodesInOrder.push(closestNode);
     if (closestNode === finishNode) return visitedNodesInOrder;

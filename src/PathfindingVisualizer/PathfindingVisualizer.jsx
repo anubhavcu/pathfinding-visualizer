@@ -224,7 +224,12 @@ export class PathfindingVisualizer extends Component {
       // isBomb: this.bombNode.status
     };
   };
-  animateDijsktra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
+  animateDijsktra = (
+    visitedNodesInOrder,
+    nodesInShortestPathOrder,
+    bombIsPresent,
+    initialOrder
+  ) => {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
@@ -236,8 +241,21 @@ export class PathfindingVisualizer extends Component {
         const node = visitedNodesInOrder[i];
         //if statement to avoid coloring of start and finish node
         if (!(node.isStart || node.isFinish || node.isBomb)) {
-          document.getElementById(`node-${node.row}-${node.col}`).className =
-            "node node-visited";
+          if (bombIsPresent) {
+            const element = document.getElementById(
+              `node-${node.row}-${node.col}`
+            );
+            if (element.className === "node node-visiting-bomb") {
+              element.className = "node node-bomb-visited";
+            } else {
+              document.getElementById(
+                `node-${node.row}-${node.col}`
+              ).className = "node node-visited";
+            }
+          } else {
+            document.getElementById(`node-${node.row}-${node.col}`).className =
+              "node node-visited";
+          }
           // this.persistColor();
         }
       }, 10 * i);
@@ -303,7 +321,7 @@ export class PathfindingVisualizer extends Component {
     // console.log(start, finish);
     const bombNode1 = grid[bombNode.row][bombNode.col];
     const visitedNodesInOrder = bombIsPresent
-      ? dijkstraToBomb(grid, start, bombNode1, finish)
+      ? dijkstraToBomb(grid, start, bombNode1)
       : dijkstra(grid, start, finish);
     const visitedNodesInOrder1 = bombIsPresent
       ? dijkstra(grid, bombNode1, finish)
@@ -329,9 +347,19 @@ export class PathfindingVisualizer extends Component {
       : null;
     // console.log(nodesInShortestPathOrder);
     if (!bombIsPresent) {
-      this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
+      this.animateDijsktra(
+        visitedNodesInOrder,
+        nodesInShortestPathOrder,
+        bombIsPresent,
+        null
+      );
     } else {
-      this.animateDijsktra(newVisitedNodeInOrder, newNodesInShortestPathOrder);
+      this.animateDijsktra(
+        newVisitedNodeInOrder,
+        newNodesInShortestPathOrder,
+        bombIsPresent,
+        visitedNodesInOrder
+      );
     }
   };
   // clearPath = () => {
