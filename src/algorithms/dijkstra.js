@@ -3,21 +3,25 @@
 // previous node, effectively allowing us to compute the shortest path
 // by backtracking from the finish node.
 
-export function dijkstra(grid, startNode, finishNode, bombIsPresent, bombNode) {
+export function dijkstra(grid, startNode, finishNode) {
   // console.log(startNode, finishNode);
   // // console.log(grid);
   // const bombNodePresent = checkBombNode(grid);
   // console.log(bombNodePresent);
-  console.log(bombIsPresent);
-  console.log(bombNode);
+
+  // console.log(bombIsPresent);
+  // console.log(bombNode);
+  // console.log(startNode, finishNode);
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   const unvisitedNodes = getAllNodes(grid);
+  // const unvisitedNodes = getAllNodes(grid);
+  // console.log(unvisitedNodes);
   while (unvisitedNodes.length) {
-    // console.log(unvisitedNodes);
     sortNodesByDistance(unvisitedNodes);
     //after sorting closest node can be any of the four/three/two/one options as we are updating all the neighbors(of a node) distance by +1.
     //
+    // console.log(unvisitedNodes);
     const closestNode = unvisitedNodes.shift();
     // console.log(closestNode);
     // console.log("closest node", closestNode);
@@ -32,20 +36,57 @@ export function dijkstra(grid, startNode, finishNode, bombIsPresent, bombNode) {
     visitedNodesInOrder.push(closestNode);
     if (closestNode === finishNode) return visitedNodesInOrder;
     updateUnvisitedNeighbors(closestNode, grid);
+    // console.log(visitedNodesInOrder);
+  }
+}
+export function dijkstraToBomb(grid, startNode, finishNode, lastNode) {
+  // console.log(startNode, finishNode);
+  // // console.log(grid);
+  // const bombNodePresent = checkBombNode(grid);
+  // console.log(bombNodePresent);
+
+  // console.log(bombIsPresent);
+  // console.log(bombNode);
+  // console.log(startNode, finishNode);
+  const visitedNodesInOrder = [];
+  startNode.distance = 0;
+  const unvisitedNodes = getAllNodes(grid);
+  // const unvisitedNodes = getAllNodes(grid);
+  // console.log(unvisitedNodes);
+  while (unvisitedNodes.length) {
+    sortNodesByDistance(unvisitedNodes);
+    //after sorting closest node can be any of the four/three/two/one options as we are updating all the neighbors(of a node) distance by +1.
+    //
+    // console.log(unvisitedNodes);
+    const closestNode = unvisitedNodes.shift();
+    // console.log(closestNode);
+    // console.log("closest node", closestNode);
+    // console.log(unvisitedNodes);
+    //if we encounter a wall we don't do anything
+    if (closestNode.isWall) continue;
+    //if distance of closest node is infinity
+    //we must be trapped and should stop
+    if (closestNode.distance === Infinity) return visitedNodesInOrder;
+    closestNode.isVisited = true;
+    // console.log(closestNode);
+    visitedNodesInOrder.push(closestNode);
+    if (closestNode === finishNode) return visitedNodesInOrder;
+    updateUnvisitedNeighbors(closestNode, grid);
+    // console.log(visitedNodesInOrder);
   }
 }
 
-function checkBombNode(grid) {
-  for (const row of grid) {
-    for (const node of row) {
-      if (node.isBomb) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-}
+// function checkBombNode(grid) {
+//   for (const row of grid) {
+//     for (const node of row) {
+//       if (node.isBomb) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     }
+//   }
+// }
 
 function updateUnvisitedNeighbors(node, grid) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
@@ -85,7 +126,9 @@ function getAllNodes(grid) {
   const nodes = [];
   for (const row of grid) {
     for (const node of row) {
+      // if (!node.isVisited) {
       nodes.push(node);
+      // }
     }
   }
   return nodes;

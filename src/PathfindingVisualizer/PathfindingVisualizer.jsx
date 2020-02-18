@@ -1,13 +1,17 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathfindingVisualizer.css";
-import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
+import {
+  dijkstra,
+  dijkstraToBomb,
+  getNodesInShortestPathOrder
+} from "../algorithms/dijkstra";
 import { astar, getNodesInShortestPathOrderAstar } from "../algorithms/astar";
 
 const START_NODE_ROW = 10,
-  START_NODE_COL = 15,
+  START_NODE_COL = 10,
   FINISH_NODE_ROW = 10,
-  FINISH_NODE_COL = 35,
+  FINISH_NODE_COL = 40,
   BOMB_NODE_ROW = 10,
   BOMB_NODE_COL = 25;
 const startNode = {
@@ -64,7 +68,7 @@ export class PathfindingVisualizer extends Component {
     } else if (
       node.row === bombNode.row &&
       node.col === bombNode.col &&
-      bombNode.status
+      bombNode.status //checking with status so it triggers only when addBomb is clicked else it will create a wall on that node
     ) {
       const newGrid = this.getNewGridWithBombNodeToggled(
         this.state.grid,
@@ -138,10 +142,16 @@ export class PathfindingVisualizer extends Component {
     const element = document.getElementById(
       `node-${bombNode.row}-${bombNode.col}`
     );
+    // const elementNew = document.getElementById(`node-${newNode.row}-${newNode.col}`)
     element.classList.remove("node-bomb");
     newGrid[row][col] = newNode;
     bombNode.row = row;
     bombNode.col = col;
+    //adding className to new node (was working fine without this also), check it later
+    // const newElement = document.getElementById(
+    //   `node-${bombNode.row}-${bombNode.col}`
+    // );
+    // newElement.className = "node node-bomb";
     return newGrid;
   };
   getNewGridWithStartNodeToggled = (grid, row, col) => {
@@ -225,7 +235,7 @@ export class PathfindingVisualizer extends Component {
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
         //if statement to avoid coloring of start and finish node
-        if (!(node.isStart || node.isFinish)) {
+        if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-visited";
           // this.persistColor();
@@ -242,7 +252,7 @@ export class PathfindingVisualizer extends Component {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
-        if (!(node.isStart || node.isFinish)) {
+        if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-shortest-path";
           // this.persistColor();
@@ -291,16 +301,38 @@ export class PathfindingVisualizer extends Component {
     const finish = grid[finishNode.row][finishNode.col];
     // console.log(startNode, finishNode);
     // console.log(start, finish);
-    const visitedNodesInOrder = dijkstra(
-      grid,
-      start,
-      finish,
-      bombIsPresent,
-      bombNode
-    );
-    console.log(visitedNodesInOrder);
-    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finish);
-    this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
+    const bombNode1 = grid[bombNode.row][bombNode.col];
+    const visitedNodesInOrder = bombIsPresent
+      ? dijkstraToBomb(grid, start, bombNode1, finish)
+      : dijkstra(grid, start, finish);
+    const visitedNodesInOrder1 = bombIsPresent
+      ? dijkstra(grid, bombNode1, finish)
+      : null;
+    // const newVisitedNodeInOrder = visitedNodesInOrder.concat(
+    //   visitedNodesInOrder1
+    // );
+    const newVisitedNodeInOrder = bombIsPresent
+      ? [...visitedNodesInOrder, ...visitedNodesInOrder1]
+      : null;
+    console.log(newVisitedNodeInOrder);
+    const nodesInShortestPathOrder = bombIsPresent
+      ? getNodesInShortestPathOrder(bombNode1)
+      : getNodesInShortestPathOrder(finish);
+    const nodesInShortestPathOrder1 = bombIsPresent
+      ? getNodesInShortestPathOrder(finish)
+      : null;
+    // const newNodesInShortestPathOrder = nodesInShortestPathOrder.concat(
+    //   nodesInShortestPathOrder1
+    // );
+    const newNodesInShortestPathOrder = bombIsPresent
+      ? [...nodesInShortestPathOrder, ...nodesInShortestPathOrder1]
+      : null;
+    // console.log(nodesInShortestPathOrder);
+    if (!bombIsPresent) {
+      this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
+    } else {
+      this.animateDijsktra(newVisitedNodeInOrder, newNodesInShortestPathOrder);
+    }
   };
   // clearPath = () => {
   //   const { grid } = this.state;
@@ -409,6 +441,8 @@ export class PathfindingVisualizer extends Component {
           // if (node.row === 10 && node.col === 25) {
           // node.bombNode = true;
           node.isBomb = true;
+          node.isWall = false;
+          // node.distance = Infinity;
           // document.getElementById(`node-${node.row}-${node.col}`).className =
           //   "node-bomb";
         } else {
