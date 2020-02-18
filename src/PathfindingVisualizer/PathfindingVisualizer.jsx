@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathfindingVisualizer.css";
+import { dijkstra, getNodesInShortestPathOrder } from "../algorithms/dijkstra";
 import {
-  dijkstra,
   dijkstraToBomb,
-  getNodesInShortestPathOrder
-} from "../algorithms/dijkstra";
+  getNodesInShortestPathOrderWithBomb
+} from "../algorithms/dijkstraWithBomb";
 import { astar, getNodesInShortestPathOrderAstar } from "../algorithms/astar";
 
 const START_NODE_ROW = 10,
@@ -224,12 +224,7 @@ export class PathfindingVisualizer extends Component {
       // isBomb: this.bombNode.status
     };
   };
-  animateDijsktra = (
-    visitedNodesInOrder,
-    nodesInShortestPathOrder,
-    bombIsPresent,
-    initialOrder
-  ) => {
+  animateDijsktra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
@@ -241,63 +236,70 @@ export class PathfindingVisualizer extends Component {
         const node = visitedNodesInOrder[i];
         //if statement to avoid coloring of start and finish node
         if (!(node.isStart || node.isFinish || node.isBomb)) {
-          if (bombIsPresent) {
-            const element = document.getElementById(
-              `node-${node.row}-${node.col}`
-            );
-            if (element.className === "node node-visiting-bomb") {
-              element.className = "node node-bomb-visited";
-            } else {
-              document.getElementById(
-                `node-${node.row}-${node.col}`
-              ).className = "node node-visited";
-            }
-          } else {
-            document.getElementById(`node-${node.row}-${node.col}`).className =
-              "node node-visited";
-          }
-          // this.persistColor();
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            "node node-visited";
         }
       }, 10 * i);
     }
   };
   animateShortestPath = nodesInShortestPathOrder => {
-    // console.log(nodesInShortestPathOrder);
-    // if (nodesInShortestPathOrder.length === 1) {
-    //   alert("No Path Found ...!!");
-    //   return;
-    // }
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
         if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-shortest-path";
-          // this.persistColor();
         }
       }, 50 * i);
     }
   };
-  // persistColor = () => {
-  //   document
-  //     .getElementById(`node-${startNode.row}-${startNode.col}`)
-  //     .classList.remove("node-visited");
-  //   document
-  //     .getElementById(`node-${startNode.row}-${startNode.col}`)
-  //     .classList.remove("node-shortest-path");
-  //   document.getElementById(
-  //     `node-${startNode.row}-${startNode.col}`
-  //   ).style.backgroundColor = "green";
-  //   document
-  //     .getElementById(`node-${finishNode.row}-${finishNode.col}`)
-  //     .classList.remove("node-visited");
-  //   document
-  //     .getElementById(`node-${finishNode.row}-${finishNode.col}`)
-  //     .classList.remove("node-shortest-path");
-  //   document.getElementById(
-  //     `node-${finishNode.row}-${finishNode.col}`
-  //   ).style.backgroundColor = "red";
-  // };
+  animateDijsktraWithBomb = (
+    visitedNodesInOrder,
+    nodesInShortestPathOrder,
+    visitedNodesInOrder1,
+    nodesInShortestPathOrder1
+  ) => {
+    // const newNodesInShortestPathOrder = [
+    //   ...nodesInShortestPathOrder,
+    //   ...nodesInShortestPathOrder1
+    // ];
+    // const newVisitedNodesInOrder = [
+    //   ...visitedNodesInOrder,
+    //   ...visitedNodesInOrder1
+    // ];
+    const newNodesInShortestPathOrder = nodesInShortestPathOrder.concat(
+      nodesInShortestPathOrder1
+    );
+    const newVisitedNodesInOrder = visitedNodesInOrder.concat(
+      visitedNodesInOrder1
+    );
+    // newVisitedNodesInOrder[0].isStart = true;
+    for (let i = 0; i <= newVisitedNodesInOrder.length; i++) {
+      if (i === newVisitedNodesInOrder.length) {
+        setTimeout(() => {
+          this.animateShortestPath(newNodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = newVisitedNodesInOrder[i];
+        //if statement to avoid coloring of start and finish node
+        if (!(node.isStart || node.isFinish || node.isBomb)) {
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            "node node-bomb-visited";
+        }
+      }, 10 * i);
+      // setTimeout(() => {
+      //   const node = newVisitedNodesInOrder[i];
+      //   //if statement to avoid coloring of start and finish node
+      //   if (!(node.isStart || node.isFinish || node.isBomb)) {
+      //     document.getElementById(`node-${node.row}-${node.col}`).className =
+      //       "node node-visited";
+      //   }
+      // }, 10 * i * 2);
+    }
+  };
+  animateShortestPathWithBomb = nodesInShortestPathOrder => {};
   visualizeDijkstra = () => {
     //just to make sure that when visualize dijkstra button is clicked path is cleared so that in case we move the start Node without clearing the board algorithm starts from a new startPoint
     //*if we don't clearPath dijkstra algorithm will start from the node whose distance is minimum and in the algorithms we have set the distance of startNode as 0(initially), so when we don't call clearPath function(in which we reset all the distance back to Infinity), and move the startNode to a new Point,visualization starts from the previous node only.
@@ -313,77 +315,40 @@ export class PathfindingVisualizer extends Component {
         }
       }
     }
-    // const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const start = grid[startNode.row][startNode.col];
-    // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     const finish = grid[finishNode.row][finishNode.col];
-    // console.log(startNode, finishNode);
-    // console.log(start, finish);
-    const bombNode1 = grid[bombNode.row][bombNode.col];
-    const visitedNodesInOrder = bombIsPresent
-      ? dijkstraToBomb(grid, start, bombNode1)
-      : dijkstra(grid, start, finish);
-    const visitedNodesInOrder1 = bombIsPresent
-      ? dijkstra(grid, bombNode1, finish)
-      : null;
-    // const newVisitedNodeInOrder = visitedNodesInOrder.concat(
-    //   visitedNodesInOrder1
-    // );
-    const newVisitedNodeInOrder = bombIsPresent
-      ? [...visitedNodesInOrder, ...visitedNodesInOrder1]
-      : null;
-    console.log(newVisitedNodeInOrder);
-    const nodesInShortestPathOrder = bombIsPresent
-      ? getNodesInShortestPathOrder(bombNode1)
-      : getNodesInShortestPathOrder(finish);
-    const nodesInShortestPathOrder1 = bombIsPresent
-      ? getNodesInShortestPathOrder(finish)
-      : null;
-    // const newNodesInShortestPathOrder = nodesInShortestPathOrder.concat(
-    //   nodesInShortestPathOrder1
-    // );
-    const newNodesInShortestPathOrder = bombIsPresent
-      ? [...nodesInShortestPathOrder, ...nodesInShortestPathOrder1]
-      : null;
-    // console.log(nodesInShortestPathOrder);
     if (!bombIsPresent) {
-      this.animateDijsktra(
+      // const startNode = grid[START_NODE_ROW][START_NODE_COL];
+      const start = grid[startNode.row][startNode.col];
+      // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+      // console.log(startNode, finishNode);
+      // console.log(start, finish);
+      const visitedNodesInOrder = dijkstra(grid, start, finish);
+      const nodesInShortestPathOrder = getNodesInShortestPathOrder(finish);
+      this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
+    } else {
+      const bombNode1 = grid[bombNode.row][bombNode.col];
+      const start = grid[startNode.row][startNode.col];
+      const visitedNodesInOrder = dijkstraToBomb(grid, start, bombNode1);
+      const nodesInShortestPathOrder = getNodesInShortestPathOrderWithBomb(
+        bombNode1
+      );
+      const visitedNodesInOrder1 = dijkstra(grid, bombNode1, finish);
+      const nodesInShortestPathOrder1 = getNodesInShortestPathOrder(finish);
+
+      this.animateDijsktraWithBomb(
         visitedNodesInOrder,
         nodesInShortestPathOrder,
-        bombIsPresent,
-        null
+        visitedNodesInOrder1,
+        nodesInShortestPathOrder1
       );
-    } else {
-      this.animateDijsktra(
-        newVisitedNodeInOrder,
-        newNodesInShortestPathOrder,
-        bombIsPresent,
-        visitedNodesInOrder
-      );
+      // console.log(visitedNodesInOrder1);
+      // console.log(nodesInShortestPathOrder1);
+      // setTimeout(() => {
+      //   this.animateDijsktra(visitedNodesInOrder1, nodesInShortestPathOrder1);
+      // }, 10000);
     }
   };
-  // clearPath = () => {
-  //   const { grid } = this.state;
-  //   const newGrid = grid.slice();
-  //   for (let i = 0; i < newGrid.length; i++) {
-  //     for (let j = 0; j < newGrid[i].length; j++) {
-  //       if (!(newGrid[i][j].isStart || newGrid[i][j].isFinish)) {
-  //         newGrid[i][j].isVisited = false;
-  //         // newGrid[i][j].distance = Infinity;
-  //         // newGrid[i][j].isWall = false;
-  //         // newGrid[i][j].previousNode = null;
-  //         const element = document.getElementById(`node-${i}-${j}`);
-  //         element.classList.remove("node-visited");
-  //         element.classList.remove("node-shortest-path");
-  //       } else {
-  //         // newGrid[i][j].isStart = newGrid[i][j].isStart;
-  //         // newGrid[i][j].isFinish = newGrid[i][j].isFinish;
-  //         // newGrid[startNode.row][startNode.col].isStart = true;
-  //       }
-  //     }
-  //   }
-  //   this.setState({ grid: newGrid });
-  // };
+
   clearBoard = () => {
     // console.log(startNode, finishNode);
     const { grid } = this.state;
@@ -395,6 +360,8 @@ export class PathfindingVisualizer extends Component {
         const element = document.getElementById(`node-${i}-${j}`);
         element.classList.remove("node-visited");
         element.classList.remove("node-shortest-path");
+        // element.classList.remove("node-visiting-bomb");
+        element.classList.remove("node-bomb-visited");
         //clearing class node-wall is optional(working fine otherwise also)
         element.classList.remove("node-wall");
 
@@ -417,6 +384,7 @@ export class PathfindingVisualizer extends Component {
         const element = document.getElementById(`node-${i}-${j}`);
         element.classList.remove("node-visited");
         element.classList.remove("node-shortest-path");
+        element.classList.remove("node-bomb-visited");
         newGrid[i][j].isVisited = false;
         newGrid[i][j].distance = Infinity;
         newGrid[i][j].previousNode = null;
@@ -554,3 +522,46 @@ export class PathfindingVisualizer extends Component {
 }
 
 export default PathfindingVisualizer;
+// persistColor = () => {
+//   document
+//     .getElementById(`node-${startNode.row}-${startNode.col}`)
+//     .classList.remove("node-visited");
+//   document
+//     .getElementById(`node-${startNode.row}-${startNode.col}`)
+//     .classList.remove("node-shortest-path");
+//   document.getElementById(
+//     `node-${startNode.row}-${startNode.col}`
+//   ).style.backgroundColor = "green";
+//   document
+//     .getElementById(`node-${finishNode.row}-${finishNode.col}`)
+//     .classList.remove("node-visited");
+//   document
+//     .getElementById(`node-${finishNode.row}-${finishNode.col}`)
+//     .classList.remove("node-shortest-path");
+//   document.getElementById(
+//     `node-${finishNode.row}-${finishNode.col}`
+//   ).style.backgroundColor = "red";
+// };
+
+// clearPath = () => {
+//   const { grid } = this.state;
+//   const newGrid = grid.slice();
+//   for (let i = 0; i < newGrid.length; i++) {
+//     for (let j = 0; j < newGrid[i].length; j++) {
+//       if (!(newGrid[i][j].isStart || newGrid[i][j].isFinish)) {
+//         newGrid[i][j].isVisited = false;
+//         // newGrid[i][j].distance = Infinity;
+//         // newGrid[i][j].isWall = false;
+//         // newGrid[i][j].previousNode = null;
+//         const element = document.getElementById(`node-${i}-${j}`);
+//         element.classList.remove("node-visited");
+//         element.classList.remove("node-shortest-path");
+//       } else {
+//         // newGrid[i][j].isStart = newGrid[i][j].isStart;
+//         // newGrid[i][j].isFinish = newGrid[i][j].isFinish;
+//         // newGrid[startNode.row][startNode.col].isStart = true;
+//       }
+//     }
+//   }
+//   this.setState({ grid: newGrid });
+// };

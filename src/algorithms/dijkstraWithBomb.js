@@ -1,10 +1,4 @@
-// Performs Dijkstra's algorithm; returns *all* nodes in the order
-// in which they were visited. Also makes nodes point back to their
-// previous node, effectively allowing us to compute the shortest path
-// by backtracking from the finish node.
-
-export function dijkstra(grid, startNode, finishNode) {
-  setAllDistanceToInfinity(grid);
+export function dijkstraToBomb(grid, startNode, finishNode) {
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   const unvisitedNodes = getAllNodes(grid);
@@ -12,36 +6,37 @@ export function dijkstra(grid, startNode, finishNode) {
   // console.log(unvisitedNodes);
   while (unvisitedNodes.length) {
     sortNodesByDistance(unvisitedNodes);
-    //after sorting closest node can be any of the four/three/two/one options as we are updating all the neighbors(of a node) distance by +1.
-    //
-    // console.log(unvisitedNodes);
+
     const closestNode = unvisitedNodes.shift();
-    // console.log(closestNode);
-    // console.log("closest node", closestNode);
-    // console.log(unvisitedNodes);
-    //if we encounter a wall we don't do anything
+
     if (closestNode.isWall) continue;
-    //if distance of closest node is infinity
-    //we must be trapped and should stop
+
     if (closestNode.distance === Infinity) return visitedNodesInOrder;
     closestNode.isVisited = true;
-    // console.log(closestNode);
+
     visitedNodesInOrder.push(closestNode);
-    // const element = document.getElementById(
-    //   `node-${closestNode.row}-${closestNode.col}`
-    // );
+    const element = document.getElementById(
+      `node-${closestNode.row}-${closestNode.col}`
+    );
+    element.className = "node node-bomb1";
     // element.classList.remove("node-bomb-visited");
     if (closestNode === finishNode) return visitedNodesInOrder;
     updateUnvisitedNeighbors(closestNode, grid);
-    // console.log(visitedNodesInOrder);
+  }
+  resetIsVisited(grid);
+}
+function resetIsVisited(grid) {
+  for (const row of grid) {
+    for (const node of row) {
+      node.isVisited = false;
+    }
   }
 }
-function setAllDistanceToInfinity(grid) {
+
+function setAllNodesDistanceToInfinity(grid) {
   for (const row of grid) {
     for (const node of row) {
       node.distance = Infinity;
-      node.isVisited = false;
-      node.previousNode = null;
     }
   }
 }
@@ -103,7 +98,7 @@ function getAllNodes(grid) {
 
 // Backtracks from the finishNode to find the shortest path.
 // Only works when called *after* the dijkstra method above.
-export function getNodesInShortestPathOrder(finishNode) {
+export function getNodesInShortestPathOrderWithBomb(finishNode) {
   const nodesInShortestPathOrder = [];
   let currentNode = finishNode;
   //current node will be null it is equal to startNode
