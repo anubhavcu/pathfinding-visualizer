@@ -3,6 +3,7 @@
   height: 25px;
   outline: 1px solid grey;
   display: inline-block;
+  /* margin: 0px; */
 }
 .node-finish {
   background-color: red;
@@ -18,7 +19,7 @@
 }
 
 /* lagging on wall animation- check it later */
-/* .node-wall {
+.node-wall {
   animation-name: wallAnimation;
   animation-duration: 0.3s;
   animation-timing-function: ease-out;
@@ -44,7 +45,7 @@
     transform: scale(1);
     background-color: rgb(12, 53, 71);
   }
-} */
+}
 .node-bomb-visited {
   animation-name: visitedBombAnimation;
   animation-duration: 1.5s;

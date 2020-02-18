@@ -1,8 +1,14 @@
 .grid {
   margin: 100px 0 0;
-  /* display: inline-block;
+  display: inline-block;
+  position: relative;
+  left: 20%;
+  transform: translateX(-25%);
+  /* background-color: blue; */
+}
+.row1 {
+  display: inline-block;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  background-color: blue; */
 }
