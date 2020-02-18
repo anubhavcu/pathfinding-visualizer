@@ -61,7 +61,11 @@ export class PathfindingVisualizer extends Component {
       );
       this.setState({ grid: newGrid, mouseIsPressed: false });
       draggingFinish = true;
-    } else if (node.row === bombNode.row && node.col === bombNode.col) {
+    } else if (
+      node.row === bombNode.row &&
+      node.col === bombNode.col &&
+      bombNode.status
+    ) {
       const newGrid = this.getNewGridWithBombNodeToggled(
         this.state.grid,
         row,
@@ -272,13 +276,28 @@ export class PathfindingVisualizer extends Component {
     this.clearPath();
     // console.log(startNode, finishNode);
     const { grid } = this.state;
+    let bombIsPresent = false;
+    // let bombNode;
+    for (const row of grid) {
+      for (const node of row) {
+        if (node.isBomb) {
+          bombIsPresent = true;
+        }
+      }
+    }
     // const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const start = grid[startNode.row][startNode.col];
     // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
     const finish = grid[finishNode.row][finishNode.col];
     // console.log(startNode, finishNode);
     // console.log(start, finish);
-    const visitedNodesInOrder = dijkstra(grid, start, finish);
+    const visitedNodesInOrder = dijkstra(
+      grid,
+      start,
+      finish,
+      bombIsPresent,
+      bombNode
+    );
     console.log(visitedNodesInOrder);
     const nodesInShortestPathOrder = getNodesInShortestPathOrder(finish);
     this.animateDijsktra(visitedNodesInOrder, nodesInShortestPathOrder);
@@ -393,10 +412,11 @@ export class PathfindingVisualizer extends Component {
           // document.getElementById(`node-${node.row}-${node.col}`).className =
           //   "node-bomb";
         } else {
-          node.bombNode = false;
+          // node.bombNode = false;
         }
       }
     }
+    bombNode.status = true;
     document.getElementById(`node-${bombNode.row}-${bombNode.col}`).className =
       "node node-bomb";
     // console.log(grid);
@@ -404,15 +424,16 @@ export class PathfindingVisualizer extends Component {
   removeBomb = () => {
     // bomb = false;
     const { grid } = this.state;
+    const element = document.getElementById(
+      `node-${bombNode.row}-${bombNode.col}`
+    );
+    element.classList.remove("node-bomb");
     for (const row of grid) {
       for (const node of row) {
         node.isBomb = false;
       }
     }
-    const element = document.getElementById(
-      `node-${bombNode.row}-${bombNode.col}`
-    );
-    element.classList.remove("node-bomb");
+    bombNode.status = false;
   };
   render() {
     const { grid, mouseIsPressed } = this.state;

@@ -2,8 +2,14 @@
 // in which they were visited. Also makes nodes point back to their
 // previous node, effectively allowing us to compute the shortest path
 // by backtracking from the finish node.
-export function dijkstra(grid, startNode, finishNode) {
+
+export function dijkstra(grid, startNode, finishNode, bombIsPresent, bombNode) {
   // console.log(startNode, finishNode);
+  // // console.log(grid);
+  // const bombNodePresent = checkBombNode(grid);
+  // console.log(bombNodePresent);
+  console.log(bombIsPresent);
+  console.log(bombNode);
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   const unvisitedNodes = getAllNodes(grid);
@@ -26,6 +32,18 @@ export function dijkstra(grid, startNode, finishNode) {
     visitedNodesInOrder.push(closestNode);
     if (closestNode === finishNode) return visitedNodesInOrder;
     updateUnvisitedNeighbors(closestNode, grid);
+  }
+}
+
+function checkBombNode(grid) {
+  for (const row of grid) {
+    for (const node of row) {
+      if (node.isBomb) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 }
 
