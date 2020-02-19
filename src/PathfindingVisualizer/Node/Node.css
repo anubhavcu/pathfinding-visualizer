@@ -31,10 +31,10 @@
 }
 
 @keyframes wallAnimation {
-  0% {
-    transform: scale(0.3);
+  /* 0% {
+    transform: scale(0.7);
     background-color: rgb(12, 53, 71);
-  }
+  } */
 
   50% {
     transform: scale(1.2);
