@@ -10,6 +10,8 @@ import {
 } from "./algorithms/dijkstraWithBomb";
 import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
 
+const NUMBER_OF_ROWS = 22,
+  NUMBER_OF_COLS = 56;
 const START_NODE_ROW = 10,
   START_NODE_COL = 10,
   FINISH_NODE_ROW = 10,
@@ -202,9 +204,9 @@ export class App extends Component {
   };
   getInitialGrid = () => {
     let grid = [];
-    for (let row = 0; row < 20; row++) {
+    for (let row = 0; row < NUMBER_OF_ROWS; row++) {
       let currentRow = [];
-      for (let col = 0; col < 50; col++) {
+      for (let col = 0; col < NUMBER_OF_COLS; col++) {
         currentRow.push(this.createNode(col, row));
       }
       grid.push(currentRow);
@@ -467,6 +469,39 @@ export class App extends Component {
     }
     bombNode.status = false;
   };
+  genRandomNumber = () => {
+    return Math.floor(Math.random() * (NUMBER_OF_COLS * NUMBER_OF_ROWS));
+  };
+  resetNodeWalls = () => {
+    const { grid } = this.state;
+    const newGrid = grid.slice();
+    for (const row of newGrid) {
+      for (const node of row) {
+        node.isWall = false;
+      }
+    }
+    this.setState({ grid: newGrid });
+  };
+  genRandomWalls = () => {
+    this.resetNodeWalls();
+    const { grid } = this.state;
+    const newGrid = grid.slice();
+    let nodes = [];
+    for (const row of grid) {
+      for (const node of row) {
+        nodes.push(node);
+      }
+    }
+    let x = 200,
+      random = this.genRandomNumber();
+    while (x) {
+      nodes[random].isWall = !nodes[random].isWall;
+      x -= 1;
+
+      random = this.genRandomNumber();
+    }
+    this.setState({ grid: newGrid });
+  };
   render() {
     return (
       <div className="App">
@@ -477,6 +512,7 @@ export class App extends Component {
           clearPath={() => this.clearPath()}
           addBomb={() => this.addBomb()}
           removeBomb={() => this.removeBomb()}
+          genRandomWalls={() => this.genRandomWalls()}
         />
         <PathfindingVisualizer
           grid={this.state.grid}

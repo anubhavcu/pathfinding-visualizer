@@ -82,9 +82,9 @@ class NavBar extends Component {
               // className="btn btn-primary btn-sm m-2"
               title="Time(worst)-O(n^2)||Time(best)-O(n)||Space-O(1)"
               // onClick={() => this.props.genRandomArray(178, 1, false)}
-              // onClick={() => this.props.insertionSort()}
+              onClick={() => this.props.genRandomWalls()}
             >
-              sample
+              Generate Random walls
             </button>
           </div>
         </nav>
