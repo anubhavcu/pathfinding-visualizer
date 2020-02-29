@@ -347,6 +347,16 @@ export class App extends Component {
           for (let k = 0; k < buttons.length; k++) {
             buttons[k].disabled = false;
           }
+          const { grid } = this.state;
+          //below loop is for re-enabling click event on the grid
+          for (const row of grid) {
+            for (const node of row) {
+              const element = document.getElementById(
+                `node-${node.row}-${node.col}`
+              );
+              element.style.pointerEvents = "auto";
+            }
+          }
         }
       }, 50 * i);
     }
@@ -406,6 +416,9 @@ export class App extends Component {
     // let bombNode;
     for (const row of grid) {
       for (const node of row) {
+        //disabling click event on grid
+        const element = document.getElementById(`node-${node.row}-${node.col}`);
+        element.style.pointerEvents = "none";
         if (node.isBomb) {
           bombIsPresent = true;
         }
@@ -555,12 +568,16 @@ export class App extends Component {
     for (let k = 0; k < buttons.length; k++) {
       buttons[k].disabled = true;
     }
+
     this.clearPath();
     const { grid } = this.state;
     let bombIsPresent = false;
     // let bombNode;
     for (const row of grid) {
       for (const node of row) {
+        //dsiabling click event on the grid
+        const element = document.getElementById(`node-${node.row}-${node.col}`);
+        element.style.pointerEvents = "none";
         if (node.isBomb) {
           bombIsPresent = true;
         }
@@ -659,7 +676,7 @@ export class App extends Component {
     let nodes = [];
     for (const row of grid) {
       for (const node of row) {
-        if (node !== startNode || node !== finishNode || node !== bombNode) {
+        if (node !== bombNode && node !== finishNode && node !== startNode) {
           nodes.push(node);
         }
       }
