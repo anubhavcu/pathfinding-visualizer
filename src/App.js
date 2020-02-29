@@ -16,7 +16,7 @@ let START_NODE_ROW = 10,
   START_NODE_COL = 10,
   FINISH_NODE_ROW = 10,
   FINISH_NODE_COL = 40,
-  BOMB_NODE_ROW = 10,
+  BOMB_NODE_ROW = 18,
   BOMB_NODE_COL = 25;
 let startNode = {
   row: START_NODE_ROW,
@@ -41,9 +41,22 @@ export class App extends Component {
     mouseIsPressed: false
   };
   getWindowSize() {
-    let height = window.screen.availHeight;
-    let width = window.screen.availWidth;
-    if (height > 1000 && width > 1900) {
+    // let height = window.screen.availHeight;
+    // let height = window.screen.height;
+    // let width = window.screen.availWidth;
+    // let width = window.screen.width;
+    // const width =
+    //   window.innerWidth ||
+    //   document.documentElement.clientWidth ||
+    //   document.body.clientWidth;
+    // const height =
+    //   window.innerHeight ||
+    //   document.documentElement.clientHeight ||
+    //   document.body.clientHeight;
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    console.log(height, width);
+    if (height > 900 || width > 1800) {
       NUMBER_OF_ROWS = 30;
       NUMBER_OF_COLS = 65;
       START_NODE_ROW = 15;
@@ -58,8 +71,40 @@ export class App extends Component {
       finishNode.col = FINISH_NODE_COL;
       bombNode.row = BOMB_NODE_ROW;
       bombNode.col = BOMB_NODE_COL;
+    } else if (
+      (height >= 820 && height < 900) ||
+      (width >= 1400 && width < 1800)
+    ) {
+      NUMBER_OF_ROWS = 22;
+      NUMBER_OF_COLS = 56;
+      START_NODE_ROW = 10;
+      START_NODE_COL = 10;
+      FINISH_NODE_ROW = 10;
+      FINISH_NODE_COL = 40;
+      BOMB_NODE_ROW = 18;
+      BOMB_NODE_COL = 25;
+      startNode.row = START_NODE_ROW;
+      startNode.col = START_NODE_COL;
+      finishNode.row = FINISH_NODE_ROW;
+      finishNode.col = FINISH_NODE_COL;
+      bombNode.row = BOMB_NODE_ROW;
+      bombNode.col = BOMB_NODE_COL;
+    } else {
+      NUMBER_OF_ROWS = 18;
+      NUMBER_OF_COLS = 42;
+      START_NODE_ROW = 8;
+      START_NODE_COL = 5;
+      FINISH_NODE_ROW = 8;
+      FINISH_NODE_COL = 35;
+      BOMB_NODE_ROW = 12;
+      BOMB_NODE_COL = 20;
+      startNode.row = START_NODE_ROW;
+      startNode.col = START_NODE_COL;
+      finishNode.row = FINISH_NODE_ROW;
+      finishNode.col = FINISH_NODE_COL;
+      bombNode.row = BOMB_NODE_ROW;
+      bombNode.col = BOMB_NODE_COL;
     }
-    console.log(height, width);
   }
   componentDidMount() {
     this.getWindowSize();
@@ -296,6 +341,13 @@ export class App extends Component {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-shortest-path";
         }
+        if (i === nodesInShortestPathOrder.length - 1) {
+          const buttons = document.getElementsByClassName("btn");
+
+          for (let k = 0; k < buttons.length; k++) {
+            buttons[k].disabled = false;
+          }
+        }
       }, 50 * i);
     }
   };
@@ -344,6 +396,10 @@ export class App extends Component {
     //just to make sure that when visualize dijkstra button is clicked path is cleared so that in case we move the start Node without clearing the board algorithm starts from a new startPoint
     //*if we don't clearPath dijkstra algorithm will start from the node whose distance is minimum and in the algorithms we have set the distance of startNode as 0(initially), so when we don't call clearPath function(in which we reset all the distance back to Infinity), and move the startNode to a new Point,visualization starts from the previous node only.
     this.clearPath();
+    const buttons = document.getElementsByClassName("btn");
+    for (let k = 0; k < buttons.length; k++) {
+      buttons[k].disabled = true;
+    }
     // console.log(startNode, finishNode);
     const { grid } = this.state;
     let bombIsPresent = false;
@@ -495,6 +551,10 @@ export class App extends Component {
     }
   };
   visualizeAstar = () => {
+    const buttons = document.getElementsByClassName("btn");
+    for (let k = 0; k < buttons.length; k++) {
+      buttons[k].disabled = true;
+    }
     this.clearPath();
     const { grid } = this.state;
     let bombIsPresent = false;
@@ -614,9 +674,20 @@ export class App extends Component {
     }
     this.setState({ grid: newGrid });
   };
+  staircaseMaze = () => {
+    console.log("maze ...");
+  };
+
   render() {
+    //check resizing later
+    // const element = document.getElementById("mainContent");
+    // element.addEventListener("onresize", () => {
+    //   this.getWindowSize();
+    //   const grid = this.getInitialGrid();
+    //   this.setState({ grid });
+    // });
     return (
-      <div className="App">
+      <div className="App" id="mainContent">
         <NavBar
           visualizeDijkstra={() => this.visualizeDijkstra()}
           visualizeAstar={() => this.visualizeAstar()}
@@ -625,6 +696,7 @@ export class App extends Component {
           addBomb={() => this.addBomb()}
           removeBomb={() => this.removeBomb()}
           genRandomWalls={() => this.genRandomWalls()}
+          staircaseMaze={() => this.staircaseMaze()}
         />
         <PathfindingVisualizer
           grid={this.state.grid}

@@ -18,7 +18,68 @@ class NavBar extends Component {
           <a href=".">
             <h3 className="text-white">PathFinding Visualizer </h3>
           </a>
-
+          <div
+            className="btn-toolbar"
+            role="toolbar"
+            aria-label="Toolbar with button groups"
+          >
+            <div
+              className="btn-group mr-2"
+              role="group"
+              aria-label="First group"
+            >
+              <button
+                type="button"
+                className="btn btn-secondary"
+                // disabled
+                title="Generate different mazes "
+              >
+                Mazes
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary "
+                title="Simple staircase maze"
+                onClick={() => this.props.staircaseMaze()}
+              >
+                M1
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                title="Basic Random Maze"
+                onClick={() => this.props.staircaseMaze()}
+              >
+                M2
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary "
+                title="Basic Random maze with bomb !"
+                onClick={() => this.props.staircaseMaze()}
+              >
+                M3
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                title="Recursive division maze "
+                onClick={() => this.props.staircaseMaze()}
+              >
+                M4
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary "
+                title="Recursive division maze (Vertical)"
+                onClick={() => {
+                  this.props.staircaseMaze();
+                }}
+              >
+                M5
+              </button>
+            </div>
+          </div>
           <div>
             <button
               className="btn btn-outline-danger m-1 btn-sm"
@@ -76,6 +137,7 @@ class NavBar extends Component {
             >
               Remove Bomb
             </button>
+
             <button
               // disabled="true"
               className="btn btn-outline-primary m-1 btn-sm"
