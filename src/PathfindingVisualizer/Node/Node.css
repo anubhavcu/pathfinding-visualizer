@@ -20,7 +20,7 @@
 
 /* lagging on wall animation- check it later */
 .node-wall {
-  animation-name: wallAnimation;
+  /* animation-name: wallAnimation; */
   animation-duration: 0.3s;
   animation-timing-function: ease-out;
   animation-delay: 0;
@@ -32,17 +32,20 @@
 
 @keyframes wallAnimation {
   /* 0% {
-    transform: scale(0.7);
+    transform: scale(1.3);
     background-color: rgb(12, 53, 71);
   } */
 
-  50% {
+  60% {
     transform: scale(1.2);
     background-color: rgb(12, 53, 71);
   }
-
+  /* 75% {
+    transform: scale(1.1);
+    background-color: rgb(12, 53, 71);
+  } */
   100% {
-    transform: scale(1);
+    transform: scale(1.05);
     background-color: rgb(12, 53, 71);
   }
 }
@@ -91,22 +94,22 @@
 @keyframes visitedBombAnimation {
   0% {
     transform: scale(0.3);
-    background-color: rgba(226, 144, 120, 0.75);
+    background-color: rgba(209, 114, 209, 0.75);
     border-radius: 100%;
   }
 
   50% {
-    background-color: rgba(163, 79, 30, 0.75);
+    background-color: rgba(207, 93, 218, 0.75);
   }
 
   75% {
     transform: scale(1.2);
-    background-color: rgba(199, 96, 12, 0.75);
+    background-color: rgba(151, 20, 123, 0.75);
   }
 
   100% {
     transform: scale(1);
-    background-color: rgba(250, 112, 6, 0.75);
+    background-color: rgba(95, 6, 91, 0.75);
   }
 }
 .node-shortest-path {

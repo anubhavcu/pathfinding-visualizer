@@ -42,6 +42,8 @@ function setAllDistanceToInfinity(grid) {
       node.distance = Infinity;
       node.isVisited = false;
       node.previousNode = null;
+      // const element = document.getElementById(`node-${node.row}-${node.col}`);
+      // element.classList.remove("node-bomb-visited");
     }
   }
 }
