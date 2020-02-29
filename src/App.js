@@ -4,10 +4,10 @@ import PathfindingVisualizer from "./PathfindingVisualizer/PathfindingVisualizer
 import NavBar from "./PathfindingVisualizer/NavBar";
 import "./App.css";
 import { dijkstra, getNodesInShortestPathOrder } from "./algorithms/dijkstra";
-import {
-  dijkstraToBomb,
-  getNodesInShortestPathOrderWithBomb
-} from "./algorithms/dijkstraWithBomb";
+// import {
+//   dijkstraToBomb,
+//   getNodesInShortestPathOrderWithBomb
+// } from "./algorithms/dijkstraWithBomb";
 import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
 
 let NUMBER_OF_ROWS = 22,
@@ -50,10 +50,14 @@ export class App extends Component {
       START_NODE_COL = 10;
       FINISH_NODE_ROW = 15;
       FINISH_NODE_COL = 55;
+      BOMB_NODE_ROW = 25;
+      BOMB_NODE_COL = 32;
       startNode.row = START_NODE_ROW;
       startNode.col = START_NODE_COL;
       finishNode.row = FINISH_NODE_ROW;
       finishNode.col = FINISH_NODE_COL;
+      bombNode.row = BOMB_NODE_ROW;
+      bombNode.col = BOMB_NODE_COL;
     }
     console.log(height, width);
   }
@@ -422,18 +426,28 @@ export class App extends Component {
     }
     this.setState({ grid: newGrid });
   };
-  animateAstar = (visitedNodesInOrder, nodesInShortestPathOrder) => {
+  animateAstar = (
+    visitedNodesInOrder,
+    nodesInShortestPathOrder,
+    bomb,
+    nodesInShortestPathOrderWithBomb
+  ) => {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
-          this.animateShortestPath(nodesInShortestPathOrder);
+          if (!bomb) {
+            //no bomb
+            this.animateShortestPath(nodesInShortestPathOrder);
+          } else {
+            this.animateShortestPath(nodesInShortestPathOrderWithBomb);
+          }
         }, 10 * i);
         return;
       }
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
         //if statement to avoid coloring of start and finish node
-        if (!(node.isStart || node.isFinish)) {
+        if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-visited";
           // this.persistColor();
@@ -441,16 +455,82 @@ export class App extends Component {
       }, 10 * i);
     }
   };
+  animateAstarWithBomb = (
+    newVisitedNodesInOrder,
+    newNodesInShortestPathOrder0,
+    newStart,
+    newFinish
+  ) => {
+    for (let i = 0; i <= newVisitedNodesInOrder.length; i++) {
+      if (i === newVisitedNodesInOrder.length) {
+        setTimeout(() => {
+          const { grid } = this.state;
+          const visitedNodesInOrder = astar(grid, newStart, newFinish);
+          const nodesInShortestPathOrder1 = getNodesInShortestPathOrderAstar(
+            newFinish
+          );
+          const nodesInShortestPathOrder = [
+            ...newNodesInShortestPathOrder0,
+            ...nodesInShortestPathOrder1
+          ];
+          // console.log("shortest path", nodesInShortestPathOrder);
+
+          this.animateAstar(
+            visitedNodesInOrder,
+            nodesInShortestPathOrder1,
+            true,
+            nodesInShortestPathOrder
+          );
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = newVisitedNodesInOrder[i];
+        //if statement to avoid coloring of start and finish node
+        if (!(node.isStart || node.isFinish || node.isBomb)) {
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            "node node-bomb-visited";
+        }
+      }, 10 * i);
+    }
+  };
   visualizeAstar = () => {
     this.clearPath();
     const { grid } = this.state;
+    let bombIsPresent = false;
+    // let bombNode;
+    for (const row of grid) {
+      for (const node of row) {
+        if (node.isBomb) {
+          bombIsPresent = true;
+        }
+      }
+    }
     const start = grid[startNode.row][startNode.col];
     const finish = grid[finishNode.row][finishNode.col];
-    const visitedNodesInOrder = astar(grid, start, finish);
-    console.log(visitedNodesInOrder);
-    const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(finish);
-    // console.log(nodesInShortestPathOrder);
-    this.animateAstar(visitedNodesInOrder, nodesInShortestPathOrder);
+    if (!bombIsPresent) {
+      const visitedNodesInOrder = astar(grid, start, finish);
+      const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(finish);
+      // console.log(nodesInShortestPathOrder);
+      this.animateAstar(
+        visitedNodesInOrder,
+        nodesInShortestPathOrder,
+        false,
+        null
+      );
+    } else {
+      const bombNode1 = grid[bombNode.row][bombNode.col];
+      const visitedNodesInOrder = astar(grid, start, bombNode1);
+      const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(
+        bombNode1
+      );
+      this.animateAstarWithBomb(
+        visitedNodesInOrder,
+        nodesInShortestPathOrder,
+        bombNode1,
+        finish
+      );
+    }
   };
   // triggerBombNode = () => {
   //   bombNode.status = !bombNode.status;
@@ -505,7 +585,9 @@ export class App extends Component {
     const newGrid = grid.slice();
     for (const row of newGrid) {
       for (const node of row) {
+        // if (node !== startNode || node !== finishNode || node !== bombNode) {
         node.isWall = false;
+        // }
       }
     }
     this.setState({ grid: newGrid });
@@ -517,7 +599,9 @@ export class App extends Component {
     let nodes = [];
     for (const row of grid) {
       for (const node of row) {
-        nodes.push(node);
+        if (node !== startNode || node !== finishNode || node !== bombNode) {
+          nodes.push(node);
+        }
       }
     }
     let x = 200,

@@ -2,6 +2,8 @@
 //f = g + h ; g= distance from startNode; h=heuristic distance(estimated distance to finish node)
 // With A*,we see that once we get past the obstacle, the algorithm prioritizes the node with the lowest f and the ‘best’ chance of reaching the end.
 export function astar(grid, startNode, finishNode) {
+  setAllDistanceToInfinity(grid);
+
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   addHeuristicDistanceToNodes(grid, startNode, finishNode);
@@ -11,7 +13,7 @@ export function astar(grid, startNode, finishNode) {
     sortNodesByTotalDistance(unvisitedNodes);
 
     const closestNode = unvisitedNodes.shift();
-    console.log(closestNode);
+    // console.log(closestNode);
     if (closestNode.isWall) continue;
     if (closestNode.distance === Infinity) return visitedNodesInOrder;
 
@@ -23,6 +25,17 @@ export function astar(grid, startNode, finishNode) {
     updateUnvisitedNeighbors(closestNode, grid);
 
     // console.log(unvisitedNodes);
+  }
+}
+function setAllDistanceToInfinity(grid) {
+  for (const row of grid) {
+    for (const node of row) {
+      node.distance = Infinity;
+      node.isVisited = false;
+      node.previousNode = null;
+      // const element = document.getElementById(`node-${node.row}-${node.col}`);
+      // element.classList.remove("node-bomb-visited");
+    }
   }
 }
 //same as dijkstra that we update the distance of neighbouring nodes by +1 and also we compute total distance as distance + heuristic distance
