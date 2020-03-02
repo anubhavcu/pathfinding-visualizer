@@ -9,6 +9,9 @@ import { dijkstra, getNodesInShortestPathOrder } from "./algorithms/dijkstra";
 //   getNodesInShortestPathOrderWithBomb
 // } from "./algorithms/dijkstraWithBomb";
 import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
+import { recursiveDivision } from "./mazeAlgorithms/recursiveDivision";
+import { staircaseMaze } from "./mazeAlgorithms/staircaseMaze";
+// import { staircaseMaze } from "./mazeAlgorithms/staircase";
 
 let NUMBER_OF_ROWS = 22,
   NUMBER_OF_COLS = 56;
@@ -97,7 +100,7 @@ export class App extends Component {
       FINISH_NODE_ROW = 8;
       FINISH_NODE_COL = 35;
       BOMB_NODE_ROW = 12;
-      BOMB_NODE_COL = 20;
+      BOMB_NODE_COL = 18;
       startNode.row = START_NODE_ROW;
       startNode.col = START_NODE_COL;
       finishNode.row = FINISH_NODE_ROW;
@@ -342,21 +345,8 @@ export class App extends Component {
             "node node-shortest-path";
         }
         if (i === nodesInShortestPathOrder.length - 1) {
-          const buttons = document.getElementsByClassName("btn");
-
-          for (let k = 0; k < buttons.length; k++) {
-            buttons[k].disabled = false;
-          }
-          const { grid } = this.state;
-          //below loop is for re-enabling click event on the grid
-          for (const row of grid) {
-            for (const node of row) {
-              const element = document.getElementById(
-                `node-${node.row}-${node.col}`
-              );
-              element.style.pointerEvents = "auto";
-            }
-          }
+          this.reEnableButtons();
+          this.enableGrid();
         }
       }, 50 * i);
     }
@@ -380,8 +370,6 @@ export class App extends Component {
             ...newNodesInShortestPathOrder0,
             ...nodesInShortestPathOrder1
           ];
-          // console.log("shortest path", nodesInShortestPathOrder);
-
           this.animateDijsktra(
             visitedNodesInOrder,
             nodesInShortestPathOrder1,
@@ -406,19 +394,14 @@ export class App extends Component {
     //just to make sure that when visualize dijkstra button is clicked path is cleared so that in case we move the start Node without clearing the board algorithm starts from a new startPoint
     //*if we don't clearPath dijkstra algorithm will start from the node whose distance is minimum and in the algorithms we have set the distance of startNode as 0(initially), so when we don't call clearPath function(in which we reset all the distance back to Infinity), and move the startNode to a new Point,visualization starts from the previous node only.
     this.clearPath();
-    const buttons = document.getElementsByClassName("btn");
-    for (let k = 0; k < buttons.length; k++) {
-      buttons[k].disabled = true;
-    }
+    this.disableButtons();
+    this.disableGrid();
     // console.log(startNode, finishNode);
     const { grid } = this.state;
     let bombIsPresent = false;
     // let bombNode;
     for (const row of grid) {
       for (const node of row) {
-        //disabling click event on grid
-        const element = document.getElementById(`node-${node.row}-${node.col}`);
-        element.style.pointerEvents = "none";
         if (node.isBomb) {
           bombIsPresent = true;
         }
@@ -564,20 +547,15 @@ export class App extends Component {
     }
   };
   visualizeAstar = () => {
-    const buttons = document.getElementsByClassName("btn");
-    for (let k = 0; k < buttons.length; k++) {
-      buttons[k].disabled = true;
-    }
-
+    //disabling all buttons while visualization
+    this.disableButtons();
+    this.disableGrid();
     this.clearPath();
     const { grid } = this.state;
     let bombIsPresent = false;
     // let bombNode;
     for (const row of grid) {
       for (const node of row) {
-        //dsiabling click event on the grid
-        const element = document.getElementById(`node-${node.row}-${node.col}`);
-        element.style.pointerEvents = "none";
         if (node.isBomb) {
           bombIsPresent = true;
         }
@@ -609,35 +587,22 @@ export class App extends Component {
       );
     }
   };
-  // triggerBombNode = () => {
-  //   bombNode.status = !bombNode.status;
-  //   return bombNode.status;
-  // };
   addBomb = () => {
-    // this.triggerBombNode(bombNode);
-    // bomb = true;
-    // console.log(bombNode.row, bombNode.col);
     const { grid } = this.state;
     for (const row of grid) {
       for (const node of row) {
         if (node.row === bombNode.row && node.col === bombNode.col) {
-          // if (node.row === 10 && node.col === 25) {
-          // node.bombNode = true;
           node.isWall = false;
           node.isBomb = true;
-          // node.distance = Infinity;
-          // document.getElementById(`node-${node.row}-${node.col}`).className =
-          //   "node-bomb";
         } else {
           // node.bombNode = false;
+          // continue;
         }
       }
     }
     bombNode.status = true;
     document.getElementById(`node-${bombNode.row}-${bombNode.col}`).className =
       "node node-bomb";
-    // console.log(grid);
-    // console.log(this.state.grid);
   };
   removeBomb = () => {
     // bomb = false;
@@ -652,7 +617,6 @@ export class App extends Component {
       }
     }
     bombNode.status = false;
-    console.log(this.state.grid);
   };
   genRandomNumber = () => {
     return Math.floor(Math.random() * (NUMBER_OF_COLS * NUMBER_OF_ROWS));
@@ -662,9 +626,7 @@ export class App extends Component {
     const newGrid = grid.slice();
     for (const row of newGrid) {
       for (const node of row) {
-        // if (node !== startNode || node !== finishNode || node !== bombNode) {
         node.isWall = false;
-        // }
       }
     }
     this.setState({ grid: newGrid });
@@ -691,10 +653,90 @@ export class App extends Component {
     }
     this.setState({ grid: newGrid });
   };
-  staircaseMaze = () => {
-    console.log("maze ...");
-  };
+  visualizeRecursiveDivision = () => {
+    this.clearBoard();
+    this.disableButtons();
+    this.disableGrid();
+    const { grid } = this.state;
+    const nodes = recursiveDivision(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+    for (let k = 0; k < nodes.length; k++) {
+      //our nodes array will always more likely be greater than the actual number of nodes on the grid (as the way we are filling the array (setting the pattern number of time,see while loop in corresponding maze algorithm), and then pruning our nodes array till it reaches undefined i.e to the size of the number of nodes in the grid)
+      if (nodes[k] === undefined) {
+        return;
+      }
 
+      setTimeout(() => {
+        if (!(nodes[k].isStart || nodes[k].isFinish || nodes[k].isBomb)) {
+          nodes[k].isWall = true;
+          const element = document.getElementById(
+            `node-${nodes[k].row}-${nodes[k].col}`
+          );
+          element.className = "node node-wall";
+        }
+        //we would'nt have reached nodes[k]===undefined as we are returning from that point so we are checking in advance (also so that disabling persists while walls are being drawn)
+        if (nodes[k + 1] === undefined) {
+          this.reEnableButtons();
+          this.enableGrid();
+        }
+      }, k * 10);
+    }
+  };
+  visualizeStaircase = () => {
+    this.clearBoard();
+    this.disableButtons();
+    this.disableGrid();
+    const { grid } = this.state;
+    const nodes = staircaseMaze(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+    for (let k = 0; k < nodes.length; k++) {
+      if (nodes[k] === undefined) {
+        return;
+      }
+      setTimeout(() => {
+        if (!(nodes[k].isStart || nodes[k].isFinish || nodes[k].isBomb)) {
+          nodes[k].isWall = true;
+          const element = document.getElementById(
+            `node-${nodes[k].row}-${nodes[k].col}`
+          );
+          element.className = "node node-wall";
+        }
+        if (nodes[k + 1] === undefined) {
+          this.reEnableButtons();
+          this.enableGrid();
+        }
+      }, k * 10);
+    }
+  };
+  disableGrid = () => {
+    const { grid } = this.state;
+    for (const row of grid) {
+      for (const node of row) {
+        const element = document.getElementById(`node-${node.row}-${node.col}`);
+        element.style.pointerEvents = "none";
+      }
+    }
+  };
+  enableGrid = () => {
+    const { grid } = this.state;
+    for (const row of grid) {
+      for (const node of row) {
+        const element = document.getElementById(`node-${node.row}-${node.col}`);
+        element.style.pointerEvents = "auto";
+      }
+    }
+  };
+  disableButtons = () => {
+    const buttons = document.getElementsByClassName("btn");
+    for (let k = 0; k < buttons.length; k++) {
+      buttons[k].disabled = true;
+    }
+  };
+  reEnableButtons = () => {
+    const buttons = document.getElementsByClassName("btn");
+
+    for (let k = 0; k < buttons.length; k++) {
+      buttons[k].disabled = false;
+    }
+  };
   render() {
     //check resizing later
     // const element = document.getElementById("mainContent");
@@ -713,7 +755,8 @@ export class App extends Component {
           addBomb={() => this.addBomb()}
           removeBomb={() => this.removeBomb()}
           genRandomWalls={() => this.genRandomWalls()}
-          staircaseMaze={() => this.staircaseMaze()}
+          visualizeRecursiveDivision={() => this.visualizeRecursiveDivision()}
+          visualizeStaircase={() => this.visualizeStaircase()}
         />
         <PathfindingVisualizer
           grid={this.state.grid}

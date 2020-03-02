@@ -40,7 +40,7 @@ class NavBar extends Component {
                 type="button"
                 className="btn btn-secondary "
                 title="Simple staircase maze"
-                onClick={() => this.props.staircaseMaze()}
+                onClick={() => this.props.visualizeRecursiveDivision()}
               >
                 M1
               </button>
@@ -48,7 +48,7 @@ class NavBar extends Component {
                 type="button"
                 className="btn btn-secondary"
                 title="Basic Random Maze"
-                onClick={() => this.props.staircaseMaze()}
+                onClick={() => this.props.visualizeStaircase()}
               >
                 M2
               </button>
