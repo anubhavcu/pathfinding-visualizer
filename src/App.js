@@ -12,7 +12,8 @@ import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
 import { recursiveDivision } from "./mazeAlgorithms/recursiveDivision";
 import { staircaseMaze } from "./mazeAlgorithms/staircaseMaze";
 // import { staircaseMaze } from "./mazeAlgorithms/staircase";
-
+let centerText =
+  "Click and drag mouse on the grid to draw obstacles(or select from different mazes), then click on the algorithm to find the shortest path ;) (try adding a bomb also...)";
 let NUMBER_OF_ROWS = 22,
   NUMBER_OF_COLS = 56;
 let START_NODE_ROW = 10,
@@ -344,6 +345,8 @@ export class App extends Component {
   };
 
   visualizeDijkstra = () => {
+    centerText =
+      "Dijkstra’s algorithm finds a shortest path tree from a single source node, by building a set of nodes that have minimum distance from the source. Dijkstra's algorithm guarantees shortest path.";
     //just to make sure that when visualize dijkstra button is clicked path is cleared so that in case we move the start Node without clearing the board algorithm starts from a new startPoint
     //*if we don't clearPath dijkstra algorithm will start from the node whose distance is minimum and in the algorithms we have set the distance of startNode as 0(initially), so when we don't call clearPath function(in which we reset all the distance back to Infinity), and move the startNode to a new Point,visualization starts from the previous node only.
     this.clearPath();
@@ -501,6 +504,8 @@ export class App extends Component {
   };
   visualizeAstar = () => {
     //disabling all buttons while visualization
+    centerText =
+      "A* algorithm calculates heuristic distance(distance from the end node) which guides it towards the target node faster. A* algorithm guarantees shortest path..";
     this.disableButtons();
     this.disableGrid();
     this.clearPath();
@@ -541,6 +546,8 @@ export class App extends Component {
     }
   };
   addBomb = () => {
+    centerText =
+      "When bomb is active the algorithm will first try to find the shortest path to bomb to deactivate it and then will reach the finish node ..";
     const { grid } = this.state;
     for (const row of grid) {
       for (const node of row) {
@@ -556,8 +563,11 @@ export class App extends Component {
     bombNode.status = true;
     document.getElementById(`node-${bombNode.row}-${bombNode.col}`).className =
       "node node-bomb";
+    this.setState({ grid });
   };
   removeBomb = () => {
+    centerText =
+      "Click and drag mouse on the grid to draw obstacles(or select from different mazes), then click on the algorithm to find the shortest path ;) (try adding a bomb also...)";
     // bomb = false;
     const { grid } = this.state;
     const element = document.getElementById(
@@ -570,6 +580,7 @@ export class App extends Component {
       }
     }
     bombNode.status = false;
+    this.setState({ grid });
   };
   genRandomNumber = () => {
     return Math.floor(Math.random() * (NUMBER_OF_COLS * NUMBER_OF_ROWS));
@@ -691,12 +702,20 @@ export class App extends Component {
       buttons[k].disabled = false;
     }
   };
+  // myfunc = () => {
+  //   return "Select an algorithm to visulize it "
+  // }
   render() {
     const myStyle = {
-      color: "white",
-      backgroundColor: "DodgerBlue",
-      padding: "10px",
-      fontFamily: "Arial"
+      color: "black",
+      // backgroundColor: "DodgerBlue",
+      padding: "0.5px",
+      fontFamily: "Arial",
+      // position: "absolute",
+      textContent: "center",
+      display: "inline-block",
+      marginBottom: "0px",
+      fontStyle: "italic"
     };
     return (
       <div className="App" id="mainContent">
@@ -714,7 +733,7 @@ export class App extends Component {
           />
         </div>
         <div id="textContent">
-          {/* <h3 style={myStyle}>Select an algorithm to visualize!</h3> */}
+          <strong style={myStyle}>{centerText}</strong>
         </div>
         <div id="gridContent">
           <PathfindingVisualizer

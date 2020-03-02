@@ -9,7 +9,11 @@ export function recursiveDivision(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
   let w = 10;
   while (w) {
     for (let i = row - 2; i >= 1; i--) {
-      if (i === (row - 2) / 2) continue;
+      // if (Math.floor(i === (row - 2) / 4) ||
+      if (i === Math.floor((row - 2) / 1.6)) continue;
+      if (i === Math.floor((row - 2) / 2.5)) continue;
+
+      // if (i === (row - 2) / 2) continue;
       nodes.push(grid[i][x]);
       // x += 1;
     }
@@ -20,8 +24,9 @@ export function recursiveDivision(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
       x += 1;
     }
     for (let i = 1; i < row - 1; i++) {
-      if (i === (row - 2) / 4) continue;
+      // if (i === (row - 2) / 4) continue;
       if (i === Math.floor((row - 2) / 1.2)) continue;
+      // if (i === Math.floor((row - 2) / 1.2)) continue;
       // if (i === (row - 2) / 2) continue;
 
       nodes.push(grid[i][x]);
