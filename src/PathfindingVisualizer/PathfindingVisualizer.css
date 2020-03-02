@@ -1,22 +1,15 @@
 .grid {
   margin: 100px 0 0;
   display: inline-block;
-  /* position: relative; */
-  /* position: absolute; */
-  /* z-index: 1; */
+
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
-  /* width: 8em; */
-  /* left: 5%; */
-  /* right: 15%; */
-  /* right: 20vw; */
-  /* transform: translateX(-25%); */
-  /* background-color: blue; */
+  /* position: relative; */
 }
-.row1 {
+/* .row1 {
   display: inline-block;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-}
+} */

@@ -44,70 +44,23 @@ export class App extends Component {
     mouseIsPressed: false
   };
   getWindowSize() {
-    // let height = window.screen.availHeight;
-    // let height = window.screen.height;
-    // let width = window.screen.availWidth;
-    // let width = window.screen.width;
-    // const width =
-    //   window.innerWidth ||
-    //   document.documentElement.clientWidth ||
-    //   document.body.clientWidth;
-    // const height =
-    //   window.innerHeight ||
-    //   document.documentElement.clientHeight ||
-    //   document.body.clientHeight;
-    const height = window.innerHeight;
-    const width = window.innerWidth;
-    console.log(height, width);
-    if (height > 900 || width > 1800) {
-      NUMBER_OF_ROWS = 30;
-      NUMBER_OF_COLS = 65;
-      START_NODE_ROW = 15;
-      START_NODE_COL = 10;
-      FINISH_NODE_ROW = 15;
-      FINISH_NODE_COL = 55;
-      BOMB_NODE_ROW = 25;
-      BOMB_NODE_COL = 32;
-      startNode.row = START_NODE_ROW;
-      startNode.col = START_NODE_COL;
-      finishNode.row = FINISH_NODE_ROW;
-      finishNode.col = FINISH_NODE_COL;
-      bombNode.row = BOMB_NODE_ROW;
-      bombNode.col = BOMB_NODE_COL;
-    } else if (
-      (height >= 820 && height < 900) ||
-      (width >= 1400 && width < 1800)
-    ) {
-      NUMBER_OF_ROWS = 22;
-      NUMBER_OF_COLS = 56;
-      START_NODE_ROW = 10;
-      START_NODE_COL = 10;
-      FINISH_NODE_ROW = 10;
-      FINISH_NODE_COL = 40;
-      BOMB_NODE_ROW = 18;
-      BOMB_NODE_COL = 25;
-      startNode.row = START_NODE_ROW;
-      startNode.col = START_NODE_COL;
-      finishNode.row = FINISH_NODE_ROW;
-      finishNode.col = FINISH_NODE_COL;
-      bombNode.row = BOMB_NODE_ROW;
-      bombNode.col = BOMB_NODE_COL;
-    } else {
-      NUMBER_OF_ROWS = 18;
-      NUMBER_OF_COLS = 42;
-      START_NODE_ROW = 8;
-      START_NODE_COL = 5;
-      FINISH_NODE_ROW = 8;
-      FINISH_NODE_COL = 35;
-      BOMB_NODE_ROW = 12;
-      BOMB_NODE_COL = 18;
-      startNode.row = START_NODE_ROW;
-      startNode.col = START_NODE_COL;
-      finishNode.row = FINISH_NODE_ROW;
-      finishNode.col = FINISH_NODE_COL;
-      bombNode.row = BOMB_NODE_ROW;
-      bombNode.col = BOMB_NODE_COL;
-    }
+    const navBarHeight = document.getElementById("navBarContent").clientHeight;
+    const gridHeight = window.innerHeight - (navBarHeight + 100);
+    const gridWidth = document.getElementById("gridContent").clientWidth;
+    NUMBER_OF_ROWS = Math.floor(gridHeight / 25 - 1);
+    NUMBER_OF_COLS = Math.floor(gridWidth / 25);
+    START_NODE_ROW = Math.floor(NUMBER_OF_ROWS / 2);
+    START_NODE_COL = Math.floor(NUMBER_OF_COLS / 6);
+    FINISH_NODE_ROW = Math.floor(NUMBER_OF_ROWS / 2);
+    FINISH_NODE_COL = Math.floor(NUMBER_OF_COLS / 1.15);
+    BOMB_NODE_ROW = Math.floor(NUMBER_OF_ROWS / 1.2);
+    BOMB_NODE_COL = Math.floor(NUMBER_OF_COLS / 2.2);
+    startNode.row = START_NODE_ROW;
+    startNode.col = START_NODE_COL;
+    finishNode.row = FINISH_NODE_ROW;
+    finishNode.col = FINISH_NODE_COL;
+    bombNode.row = BOMB_NODE_ROW;
+    bombNode.col = BOMB_NODE_COL;
   }
   componentDidMount() {
     this.getWindowSize();
@@ -632,6 +585,7 @@ export class App extends Component {
     this.setState({ grid: newGrid });
   };
   genRandomWalls = () => {
+    this.clearPath();
     this.resetNodeWalls();
     const { grid } = this.state;
     const newGrid = grid.slice();
@@ -738,33 +692,39 @@ export class App extends Component {
     }
   };
   render() {
-    //check resizing later
-    // const element = document.getElementById("mainContent");
-    // element.addEventListener("onresize", () => {
-    //   this.getWindowSize();
-    //   const grid = this.getInitialGrid();
-    //   this.setState({ grid });
-    // });
+    const myStyle = {
+      color: "white",
+      backgroundColor: "DodgerBlue",
+      padding: "10px",
+      fontFamily: "Arial"
+    };
     return (
       <div className="App" id="mainContent">
-        <NavBar
-          visualizeDijkstra={() => this.visualizeDijkstra()}
-          visualizeAstar={() => this.visualizeAstar()}
-          clearBoard={() => this.clearBoard()}
-          clearPath={() => this.clearPath()}
-          addBomb={() => this.addBomb()}
-          removeBomb={() => this.removeBomb()}
-          genRandomWalls={() => this.genRandomWalls()}
-          visualizeRecursiveDivision={() => this.visualizeRecursiveDivision()}
-          visualizeStaircase={() => this.visualizeStaircase()}
-        />
-        <PathfindingVisualizer
-          grid={this.state.grid}
-          mouseIsPressed={this.state.mouseIsPressed}
-          handleMouseUp={(row, col) => this.handleMouseUp(row, col)}
-          handleMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-          handleMouseDown={(row, col) => this.handleMouseDown(row, col)}
-        />
+        <div id="navBarContent">
+          <NavBar
+            visualizeDijkstra={() => this.visualizeDijkstra()}
+            visualizeAstar={() => this.visualizeAstar()}
+            clearBoard={() => this.clearBoard()}
+            clearPath={() => this.clearPath()}
+            addBomb={() => this.addBomb()}
+            removeBomb={() => this.removeBomb()}
+            genRandomWalls={() => this.genRandomWalls()}
+            visualizeRecursiveDivision={() => this.visualizeRecursiveDivision()}
+            visualizeStaircase={() => this.visualizeStaircase()}
+          />
+        </div>
+        <div id="textContent">
+          {/* <h3 style={myStyle}>Select an algorithm to visualize!</h3> */}
+        </div>
+        <div id="gridContent">
+          <PathfindingVisualizer
+            grid={this.state.grid}
+            mouseIsPressed={this.state.mouseIsPressed}
+            handleMouseUp={(row, col) => this.handleMouseUp(row, col)}
+            handleMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
+            handleMouseDown={(row, col) => this.handleMouseDown(row, col)}
+          />
+        </div>
       </div>
     );
   }

@@ -39,7 +39,7 @@ class NavBar extends Component {
               <button
                 type="button"
                 className="btn btn-secondary "
-                title="Simple staircase maze"
+                title="Recursive Division maze"
                 onClick={() => this.props.visualizeRecursiveDivision()}
               >
                 M1
@@ -47,7 +47,7 @@ class NavBar extends Component {
               <button
                 type="button"
                 className="btn btn-secondary"
-                title="Basic Random Maze"
+                title="Simple staircase maze"
                 onClick={() => this.props.visualizeStaircase()}
               >
                 M2
@@ -84,7 +84,7 @@ class NavBar extends Component {
             <button
               className="btn btn-outline-danger m-1 btn-sm"
               // className="btn btn-primary btn-sm m-2"
-              title="Generate a new random array"
+              title="Visualize dijkstra algoritm!"
               onClick={() => {
                 // disabled = true;
                 this.props.visualizeDijkstra();
@@ -96,7 +96,7 @@ class NavBar extends Component {
             <button
               className="btn btn-outline-danger m-1 btn-sm"
               // className="btn btn-primary btn-sm m-2"
-              title="Generate a new random array"
+              title="Visualize A* algorithm"
               onClick={() => {
                 // disabled = true;
                 this.props.visualizeAstar();
@@ -107,7 +107,7 @@ class NavBar extends Component {
             </button>
             <button
               className="btn btn-outline-primary m-1 btn-sm"
-              title="Time- O(nlog(n)) & Space-O(n)"
+              title="Clear entire board"
               // className="btn btn-primary btn-sm m-2"
               onClick={() => this.props.clearBoard()}
             >
@@ -115,7 +115,7 @@ class NavBar extends Component {
             </button>
             <button
               className="btn btn-outline-primary m-1 btn-sm"
-              title="Time(worst)-O(n^2)||Time(best)-O(n)||Space-O(1)"
+              title="Clear Shortest Path"
               // className="btn btn-primary btn-sm m-2"
               onClick={() => this.props.clearPath()}
             >
@@ -124,7 +124,7 @@ class NavBar extends Component {
             <button
               className="btn btn-outline-primary m-1 btn-sm"
               // className="btn btn-primary btn-sm m-2"
-              title="Time(worst)-O(n^2)||Time(best)-O(nlog(n))||Space-O(log(n))"
+              title="Add bomb Node!"
               onClick={() => this.props.addBomb()}
             >
               Add Bomb
@@ -132,7 +132,7 @@ class NavBar extends Component {
             <button
               className="btn btn-outline-primary m-1 btn-sm"
               // className="btn btn-primary btn-sm m-2"
-              title="Time-O(nlog(n))||Space-O(1)"
+              title="Remove Bomb Node"
               onClick={() => this.props.removeBomb()}
             >
               Remove Bomb
@@ -142,7 +142,7 @@ class NavBar extends Component {
               // disabled="true"
               className="btn btn-outline-primary m-1 btn-sm"
               // className="btn btn-primary btn-sm m-2"
-              title="Time(worst)-O(n^2)||Time(best)-O(n)||Space-O(1)"
+              title="Generate Random walls"
               // onClick={() => this.props.genRandomArray(178, 1, false)}
               onClick={() => this.props.genRandomWalls()}
             >
