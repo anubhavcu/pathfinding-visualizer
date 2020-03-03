@@ -303,13 +303,9 @@ export class App extends Component {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
-        const nextNode = nodesInShortestPathOrder[i + 1];
         if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-shortest-path";
-          document.getElementById(
-            `node-${nextNode.row}-${nextNode.col}`
-          ).className = "node arrow";
         }
         if (i === nodesInShortestPathOrder.length - 1) {
           this.reEnableButtons();
