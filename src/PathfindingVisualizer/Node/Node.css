@@ -17,6 +17,14 @@
 .node-bomb {
   background-color: purple;
 }
+/* .arrow {
+  display: block;
+  text-indent: -9999px;
+  width: 20px;
+  height: 20px;
+  background-size: 100px 82px;
+  background-image: url("../../assets/right_arrow.svg");
+} */
 
 /* lagging on wall animation- check it later */
 .node-wall {

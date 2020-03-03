@@ -41,7 +41,7 @@ function setAllDistanceToInfinity(grid) {
 //same as dijkstra that we update the distance of neighbouring nodes by +1 and also we compute total distance as distance + heuristic distance
 function updateUnvisitedNeighbors(node, grid) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
-  console.log(unvisitedNeighbors);
+  // console.log(unvisitedNeighbors);
   for (let neighbor of unvisitedNeighbors) {
     neighbor.distance = node.distance + 1;
     neighbor.totalDistance = node.distance + 1 + neighbor.heuristicDistance;

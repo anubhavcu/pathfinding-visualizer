@@ -119,10 +119,18 @@ export class App extends Component {
 
   handleMouseEnter = (row, col) => {
     if (!this.state.mouseIsPressed) return;
-
-    // if (!draggingStart || !draggingFinish) {
-    const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({ grid: newGrid });
+    //below if statement to prevent dragging and forming wall node over the bomb node(mouseIsPressed set to false not working here)
+    //remove this if condition with only bombNode condition if problem persists
+    if (
+      !(
+        (row === bombNode.row && col === bombNode.col) ||
+        (row === startNode.row && col === startNode.col) ||
+        (row === finishNode.row && col === finishNode.col)
+      )
+    ) {
+      const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
+      this.setState({ grid: newGrid });
+    }
   };
   //when pressed mouse button is released
   handleMouseUp = (row, col) => {
@@ -157,12 +165,11 @@ export class App extends Component {
     draggingBomb = false;
   };
   getNewGridWithBombNodeToggled = (grid, row, col) => {
-    // console.log("bom node toggle");
-
+    bombNode.row = row;
+    bombNode.col = col;
+    console.log(this.state.mouseIsPressed);
     const newGrid = grid.slice();
-    // console.log(newGrid);
     const node = newGrid[row][col];
-    // console.log(node);
     const newNode = {
       ...node,
       isBomb: !node.isBomb,
@@ -175,8 +182,6 @@ export class App extends Component {
     element.classList.remove("node-bomb");
     // element.classList.remove("node-wall");
     newGrid[row][col] = newNode;
-    bombNode.row = row;
-    bombNode.col = col;
     //adding className to new node (was working fine without this also), check it later
     // const newElement = document.getElementById(
     //   `node-${bombNode.row}-${bombNode.col}`
@@ -187,6 +192,8 @@ export class App extends Component {
   getNewGridWithStartNodeToggled = (grid, row, col) => {
     const newGrid = grid.slice();
     const node = newGrid[row][col];
+    startNode.row = row;
+    startNode.col = col;
     const newNode = {
       ...node,
       isStart: !node.isStart,
@@ -199,12 +206,14 @@ export class App extends Component {
       //distance setting to infinity not working, alternative is clearPath function
     };
     newGrid[row][col] = newNode;
-    startNode.row = row;
-    startNode.col = col;
+    // startNode.row = row;
+    // startNode.col = col;
     return newGrid;
   };
   getNewGridWithFinishNodeToggled = (grid, row, col) => {
     const newGrid = grid.slice();
+    finishNode.row = row;
+    finishNode.col = col;
     const node = newGrid[row][col];
     const newNode = {
       ...node,
@@ -213,8 +222,8 @@ export class App extends Component {
       // distance: Infinity
     };
     newGrid[row][col] = newNode;
-    finishNode.row = row;
-    finishNode.col = col;
+    // finishNode.row = row;
+    // finishNode.col = col;
     return newGrid;
   };
   //changing the wall state
@@ -294,9 +303,13 @@ export class App extends Component {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
+        const nextNode = nodesInShortestPathOrder[i + 1];
         if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-shortest-path";
+          document.getElementById(
+            `node-${nextNode.row}-${nextNode.col}`
+          ).className = "node arrow";
         }
         if (i === nodesInShortestPathOrder.length - 1) {
           this.reEnableButtons();
@@ -356,13 +369,17 @@ export class App extends Component {
     const { grid } = this.state;
     let bombIsPresent = false;
     // let bombNode;
-    for (const row of grid) {
-      for (const node of row) {
-        if (node.isBomb) {
-          bombIsPresent = true;
-        }
-      }
+    // for (const row of grid) {
+    //   for (const node of row) {
+    //     if (node.isBomb) {
+    //       bombIsPresent = true;
+    //     }
+    //   }
+    // }
+    if (bombNode.status) {
+      bombIsPresent = true;
     }
+    console.log("dijkstra'", bombIsPresent);
     const finish = grid[finishNode.row][finishNode.col];
     if (!bombIsPresent) {
       // const startNode = grid[START_NODE_ROW][START_NODE_COL];
@@ -512,13 +529,17 @@ export class App extends Component {
     const { grid } = this.state;
     let bombIsPresent = false;
     // let bombNode;
-    for (const row of grid) {
-      for (const node of row) {
-        if (node.isBomb) {
-          bombIsPresent = true;
-        }
-      }
+    // for (const row of grid) {
+    //   for (const node of row) {
+    //     if (node.isBomb) {
+    //       bombIsPresent = true;
+    //     }
+    //   }
+    // }
+    if (bombNode.status) {
+      bombIsPresent = true;
     }
+    console.log(bombIsPresent);
     const start = grid[startNode.row][startNode.col];
     const finish = grid[finishNode.row][finishNode.col];
     if (!bombIsPresent) {
