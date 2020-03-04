@@ -124,6 +124,7 @@ class NavBar extends Component {
             <button
               className="btn btn-outline-primary m-1 btn-sm"
               // className="btn btn-primary btn-sm m-2"
+              id="add-bomb-button"
               title="Add bomb Node!"
               onClick={() => this.props.addBomb()}
             >

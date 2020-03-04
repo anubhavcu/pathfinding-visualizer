@@ -35,7 +35,7 @@ let bombNode = {
   col: BOMB_NODE_COL,
   status: false
 };
-let bomb = false;
+// let bomb = false;
 let draggingStart = false,
   draggingFinish = false,
   draggingBomb = false;
@@ -165,9 +165,18 @@ export class App extends Component {
     draggingBomb = false;
   };
   getNewGridWithBombNodeToggled = (grid, row, col) => {
+    // let element1 = document.getElementById(`node-${row}-${col}`);
+    // element1.addEventListener("dragstart", () => {
+    //   element1.onDragStart = function(evt) {
+    //     element1.selected(evt);
+    //     prevX = evt.clientX;
+    //     prevY = evt.clientY;
+    //     evt.originalEvent.dataTransfer.setDragImage(null, 0, 0); // add this line
+    //   };
+    // });
     bombNode.row = row;
     bombNode.col = col;
-    console.log(this.state.mouseIsPressed);
+    // console.log(this.state.mouseIsPressed);
     const newGrid = grid.slice();
     const node = newGrid[row][col];
     const newNode = {
@@ -178,6 +187,7 @@ export class App extends Component {
     const element = document.getElementById(
       `node-${bombNode.row}-${bombNode.col}`
     );
+
     // const elementNew = document.getElementById(`node-${newNode.row}-${newNode.col}`)
     element.classList.remove("node-bomb");
     // element.classList.remove("node-wall");
@@ -581,8 +591,11 @@ export class App extends Component {
     document.getElementById(`node-${bombNode.row}-${bombNode.col}`).className =
       "node node-bomb";
     this.setState({ grid });
+    document.getElementById("add-bomb-button").disabled = true;
   };
   removeBomb = () => {
+    document.getElementById("add-bomb-button").disabled = false;
+
     centerText =
       "Click and drag mouse on the grid to draw obstacles(or select from different mazes), then click on the algorithm to find the shortest path ;) (try adding a bomb also...)";
     // bomb = false;
@@ -620,14 +633,29 @@ export class App extends Component {
     let nodes = [];
     for (const row of grid) {
       for (const node of row) {
-        if (node !== bombNode && node !== finishNode && node !== startNode) {
+        // if (node !== bombNode && node !== finishNode && node !== startNode) {
+        //   nodes.push(node);
+        // }
+
+        if (
+          !(
+            (node.row === bombNode.row && node.col === bombNode.col) ||
+            (node.row === startNode.row && node.col === startNode.col) ||
+            (node.row === finishNode.row && node.col === finishNode.col)
+          )
+        ) {
           nodes.push(node);
         }
       }
     }
-    let x = 200,
+    let numberOfPlainNodes = nodes.length;
+    // let x = 200,
+    let x = Math.floor((40 / 100) * numberOfPlainNodes),
       random = this.genRandomNumber();
+    //some kind of error with genRandomWall function, to ignore it following two if statements are there, check later if problem persists "cannot read property nodes[random].isWall of unknown"
     while (x) {
+      if (nodes[random] === undefined) return;
+      if (nodes[random].isWall === undefined) return;
       nodes[random].isWall = !nodes[random].isWall;
       x -= 1;
 
@@ -717,6 +745,10 @@ export class App extends Component {
 
     for (let k = 0; k < buttons.length; k++) {
       buttons[k].disabled = false;
+    }
+    //keeping addBomb button disabled if it is present on the grid
+    if (bombNode.status) {
+      document.getElementById("add-bomb-button").disabled = true;
     }
   };
   // myfunc = () => {

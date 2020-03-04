@@ -6,16 +6,20 @@
   /* margin: 0px; */
 }
 .node-finish {
-  background-color: red;
+  background-image: url("../../assets/finish.png");
+
+  /* background-color: rgb(15, 177, 231); */
 }
 .node-start {
-  background-color: green;
+  background-image: url("../../assets/start.png");
+  background-color: rgb(73, 226, 12);
 }
 .node-wall {
   background-color: rgb(12, 53, 71);
 }
 .node-bomb {
-  background-color: purple;
+  background-image: url("../../assets/bombImage2.png");
+  background-color: red;
 }
 /* .arrow {
   display: block;
