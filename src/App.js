@@ -72,6 +72,7 @@ export class App extends Component {
   }
   //mouse is pressed and not lifted up
   handleMouseDown = (row, col) => {
+    this.clearPath();
     const node = {
       row: row,
       col: col
@@ -309,13 +310,92 @@ export class App extends Component {
       }, 10 * i);
     }
   };
+  //remove the arrow classname and calling this function in clearPath and clearBoard functions so that arrow are removed after visualization
+  removeArrowClass = () => {
+    const { grid } = this.state;
+    for (const row of grid) {
+      for (const node of row) {
+        const element = document.getElementById(`node-${node.row}-${node.col}`);
+        element.classList.remove("node-right-arrow");
+        element.classList.remove("node-left-arrow");
+        element.classList.remove("node-up-arrow");
+        element.classList.remove("node-down-arrow");
+        // if (node === finishNode) {
+        //   element.className = "node node-finish";
+        // }
+      }
+    }
+  };
+  determineImage = (currentNode, previousNode) => {
+    const element = document.getElementById(
+      `node-${currentNode.row}-${currentNode.col}`
+    );
+    if (currentNode.col > previousNode.col) {
+      //moving right
+      element.className = "node node-shortest-path node-right-arrow";
+    } else if (currentNode.row < previousNode.row) {
+      //moving up
+      element.className = "node node-shortest-path node-up-arrow";
+    } else if (currentNode.col < previousNode.col) {
+      // moving left
+      element.className = "node node-shortest-path node-left-arrow";
+    } else if (currentNode.row > previousNode.row) {
+      //moving down
+      element.className = "node node-shortest-path node-down-arrow";
+    }
+  };
+  //this function adds the correct positioned arrow before the finish node as determineImage wasn't getting it correctly
+  arrowForSecondLastNode = (node, previousNode) => {
+    const element = document.getElementById(
+      `node-${previousNode.row}-${previousNode.col}`
+    );
+    if (node.col > previousNode.col) {
+      //finish node is right
+      element.className = "node node-shortest-path node-right-arrow";
+    } else if (node.row > previousNode.row) {
+      //finish node is below
+      element.className = "node node-shortest-path node-down-arrow";
+    } else if (node.row < previousNode.row) {
+      //finish node is above
+      element.className = "node node-shortest-path node-up-arrow";
+    } else if (node.col < previousNode.col) {
+      //finish node is left
+      element.className = "node node-shortest-path node-left-arrow";
+    }
+  };
   animateShortestPath = nodesInShortestPathOrder => {
     for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPathOrder[i];
+        const previousNode = nodesInShortestPathOrder[i - 1];
         if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-shortest-path";
+          //setting the arrow image
+          this.determineImage(node, previousNode);
+          //first we are setting the image of the current travelling node and then removing the previous one's image(if set) simultaneously to make it look like a moving arrow
+          //resetting the arrow image of previous node (so that it looks like a travelling arrow)
+          if (
+            !(
+              previousNode.isStart ||
+              previousNode.isFinish ||
+              previousNode.isBomb
+            )
+          ) {
+            document.getElementById(
+              `node-${previousNode.row}-${previousNode.col}`
+            ).style.backgroundImage = "none";
+          }
+        }
+        //this if block is for direction arrow of node just before finish node
+        if (node.isBomb) {
+          // this.determineImage(node, previousNode);
+          this.arrowForSecondLastNode(node, previousNode);
+        }
+        //this if block is for direction arrow of node just before finish node
+        if (node.isFinish) {
+          // this.determineImage(node, previousNode);
+          this.arrowForSecondLastNode(node, previousNode);
         }
         if (i === nodesInShortestPathOrder.length - 1) {
           this.reEnableButtons();
@@ -415,6 +495,7 @@ export class App extends Component {
   };
 
   clearBoard = () => {
+    this.removeArrowClass();
     this.removeBomb();
     const { grid } = this.state;
     const newGrid = grid.slice();
@@ -439,7 +520,7 @@ export class App extends Component {
     this.setState({ grid: newGrid });
   };
   clearPath = () => {
-    // console.log(startNode, finishNode);
+    this.removeArrowClass();
     const { grid } = this.state;
     const newGrid = grid.slice();
     // console.log(newGrid[startNode.row][startNode.col]);
@@ -573,6 +654,7 @@ export class App extends Component {
     }
   };
   addBomb = () => {
+    this.clearPath();
     centerText =
       "When bomb is active the algorithm will first try to find the shortest path to bomb to deactivate it and then will reach the finish node ..";
     const { grid } = this.state;
@@ -757,7 +839,7 @@ export class App extends Component {
   render() {
     const myStyle = {
       color: "black",
-      // backgroundColor: "DodgerBlue",
+      backgroundColor: "lightblue",
       padding: "0.5px",
       fontFamily: "Arial",
       // position: "absolute",
@@ -766,6 +848,7 @@ export class App extends Component {
       marginBottom: "0px",
       fontStyle: "italic"
     };
+
     return (
       <div className="App" id="mainContent">
         <div id="navBarContent">

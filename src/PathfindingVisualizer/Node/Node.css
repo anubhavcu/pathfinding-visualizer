@@ -124,7 +124,20 @@
     background-color: rgba(95, 6, 91, 0.75);
   }
 }
+.node-right-arrow {
+  background-image: url("../../assets/arrows/rightArrow.svg");
+}
+.node-left-arrow {
+  background-image: url("../../assets/arrows/leftArrow.svg");
+}
+.node-up-arrow {
+  background-image: url("../../assets/arrows/upArrow.svg");
+}
+.node-down-arrow {
+  background-image: url("../../assets/arrows/downArrow.svg");
+}
 .node-shortest-path {
+  /* background-image: url("../../assets/upArrow.svg"); */
   animation-name: shortestPath;
   animation-duration: 1.5s;
   animation-timing-function: ease-out;

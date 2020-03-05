@@ -56,6 +56,17 @@ function getUnvisitedNeighbors(node, grid) {
   if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
   if (col > 0) neighbors.push(grid[row][col - 1]);
   if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
+  //  // diagnal elements
+  // // top-right
+  // if (row > 0 && col < grid[0].length - 1)
+  //   neighbors.push(grid[row - 1][col + 1]);
+  // // bottom-right
+  //  if (row < grid.length - 1 && col < grid[0].length - 1)
+  //   neighbors.push(grid[row + 1][col + 1]);
+  // // bottom-left
+  // if (row < grid.length - 1 && col > 0) neighbors.push(grid[row + 1][col - 1]);
+  // // top-left
+  // if (row > 0 && col > 0) neighbors.push(grid[row - 1][col - 1]);
 
   return neighbors.filter(neighbor => !neighbor.isVisited);
 }
@@ -71,8 +82,8 @@ function addHeuristicDistanceToNodes(grid, startNode, finishNode) {
       const b = Math.abs(finishNode.row - node.row);
       const h = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
       //adding random value to h to enhace the value of heuristic distance
-      //if we enhanced the value too much(i.e multiply by 5/10/100, shortest path will be more strict, i.e it would choose a deviated path instead of straight line. therefore some average value is added not multiplied
-      node.heuristicDistance = h + 100;
+      //if we enhanced the value too much(i.e multiply by 5/10/100, shortest path will be more strict, i.e it would choose a deviated path instead of straight line. therefore some average value is added or multiplied
+      node.heuristicDistance = (h + 10) * 1.04;
       node.totalDistance = node.distance + node.heuristicDistance;
     }
   }
