@@ -11,6 +11,8 @@ import { dijkstra, getNodesInShortestPathOrder } from "./algorithms/dijkstra";
 import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
 import { recursiveDivision } from "./mazeAlgorithms/recursiveDivision";
 import { staircaseMaze } from "./mazeAlgorithms/staircaseMaze";
+import { mazeThree } from "./mazeAlgorithms/maze3";
+import { mazeFour } from "./mazeAlgorithms/maze4";
 // import { staircaseMaze } from "./mazeAlgorithms/staircase";
 let centerText =
   "Click and drag mouse on the grid to draw obstacles(or select from different mazes), then click on the algorithm to find the shortest path ;) (try adding a bomb also...)";
@@ -346,6 +348,9 @@ export class App extends Component {
   };
   //this function adds the correct positioned arrow before the finish node as determineImage wasn't getting it correctly
   arrowForSecondLastNode = (node, previousNode) => {
+    //two if conditions to escape the bug when no path to bombNode is found
+    if (previousNode === undefined) return;
+    if (node === undefined) return;
     const element = document.getElementById(
       `node-${previousNode.row}-${previousNode.col}`
     );
@@ -493,7 +498,6 @@ export class App extends Component {
       );
     }
   };
-
   clearBoard = () => {
     this.removeArrowClass();
     this.removeBomb();
@@ -519,8 +523,22 @@ export class App extends Component {
     }
     this.setState({ grid: newGrid });
   };
+  // restoreImages = () => {
+  //   const { grid } = this.state;
+  //   let newGrid = grid.slice();
+  //   for (const row of grid) {
+  //     for (const node of row) {
+  //       const newNode = node;
+  //       newGrid[node] = newNode;
+  //     }
+  //   }
+  //   this.setState({ grid: newGrid });
+  //   console.log(grid);
+  //   console.log(newGrid);
+  // };
   clearPath = () => {
     this.removeArrowClass();
+    // this.restoreImages();
     const { grid } = this.state;
     const newGrid = grid.slice();
     // console.log(newGrid[startNode.row][startNode.col]);
@@ -798,6 +816,56 @@ export class App extends Component {
       }, k * 10);
     }
   };
+  visualizeMazeThree = () => {
+    this.clearBoard();
+    this.disableButtons();
+    this.disableGrid();
+    const { grid } = this.state;
+    const nodes = mazeThree(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+    for (let k = 0; k < nodes.length; k++) {
+      if (nodes[k] === undefined) {
+        return;
+      }
+      setTimeout(() => {
+        if (!(nodes[k].isStart || nodes[k].isFinish || nodes[k].isBomb)) {
+          nodes[k].isWall = true;
+          const element = document.getElementById(
+            `node-${nodes[k].row}-${nodes[k].col}`
+          );
+          element.className = "node node-wall";
+        }
+        if (nodes[k + 1] === undefined) {
+          this.reEnableButtons();
+          this.enableGrid();
+        }
+      }, k * 10);
+    }
+  };
+  visualizeMazeFour = () => {
+    this.clearBoard();
+    this.disableButtons();
+    this.disableGrid();
+    const { grid } = this.state;
+    const nodes = mazeFour(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS);
+    for (let k = 0; k < nodes.length; k++) {
+      if (nodes[k] === undefined) {
+        return;
+      }
+      setTimeout(() => {
+        if (!(nodes[k].isStart || nodes[k].isFinish || nodes[k].isBomb)) {
+          nodes[k].isWall = true;
+          const element = document.getElementById(
+            `node-${nodes[k].row}-${nodes[k].col}`
+          );
+          element.className = "node node-wall";
+        }
+        if (nodes[k + 1] === undefined) {
+          this.reEnableButtons();
+          this.enableGrid();
+        }
+      }, k * 10);
+    }
+  };
   disableGrid = () => {
     const { grid } = this.state;
     for (const row of grid) {
@@ -862,6 +930,8 @@ export class App extends Component {
             genRandomWalls={() => this.genRandomWalls()}
             visualizeRecursiveDivision={() => this.visualizeRecursiveDivision()}
             visualizeStaircase={() => this.visualizeStaircase()}
+            visualizeMazeThree={() => this.visualizeMazeThree()}
+            visualizeMazeFour={() => this.visualizeMazeFour()}
           />
         </div>
         <div id="textContent">

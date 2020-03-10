@@ -56,7 +56,7 @@ class NavBar extends Component {
                 type="button"
                 className="btn btn-secondary "
                 title="Basic Random maze with bomb !"
-                onClick={() => this.props.staircaseMaze()}
+                onClick={() => this.props.visualizeMazeThree()}
               >
                 M3
               </button>
@@ -64,7 +64,7 @@ class NavBar extends Component {
                 type="button"
                 className="btn btn-secondary"
                 title="Recursive division maze "
-                onClick={() => this.props.staircaseMaze()}
+                onClick={() => this.props.visualizeMazeFour()}
               >
                 M4
               </button>
@@ -73,7 +73,7 @@ class NavBar extends Component {
                 className="btn btn-secondary "
                 title="Recursive division maze (Vertical)"
                 onClick={() => {
-                  this.props.staircaseMaze();
+                  this.props.genRandomWalls();
                 }}
               >
                 M5

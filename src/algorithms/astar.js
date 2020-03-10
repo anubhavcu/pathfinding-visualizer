@@ -83,7 +83,8 @@ function addHeuristicDistanceToNodes(grid, startNode, finishNode) {
       const h = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
       //adding random value to h to enhace the value of heuristic distance
       //if we enhanced the value too much(i.e multiply by 5/10/100, shortest path will be more strict, i.e it would choose a deviated path instead of straight line. therefore some average value is added or multiplied
-      node.heuristicDistance = (h + 10) * 1.04;
+      node.heuristicDistance = h + 1000;
+
       node.totalDistance = node.distance + node.heuristicDistance;
     }
   }
