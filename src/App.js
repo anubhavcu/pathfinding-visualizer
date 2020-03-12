@@ -910,7 +910,8 @@ export class App extends Component {
   render() {
     const myStyle = {
       color: "black",
-      backgroundColor: "lightblue",
+      // backgroundColor: "lightblue",
+      backgroundColor: "ghostwhite",
       padding: "0.5px",
       fontFamily: "Arial",
       // position: "absolute",
@@ -950,6 +951,35 @@ export class App extends Component {
                 Quick Demo
               </button>
             </NavLink>
+            {/* demo css effect is shown here .idk how? */}
+            <div style={myStyle}>
+              {/* <p> */}
+              <div id="alignHelperDiv">
+                <div id="wallNodeImage"> </div> Wall Node
+              </div>
+              <div id="alignHelperDiv">
+                <div id="emptyNodeImage"> </div> Unvisited Node
+              </div>
+              <div id="alignHelperDiv">
+                <div id="visitedNodeImage1"> </div>
+              </div>
+              <div id="alignHelperDiv">
+                <div id="visitedNodeImage2"> </div> Visited Nodes
+              </div>
+              <div id="alignHelperDiv">
+                <div id="startNodeImage"> </div> Start Node
+              </div>
+              <div id="alignHelperDiv">
+                <div id="finishNodeImage"> </div> Finish Node
+              </div>
+              <div id="alignHelperDiv">
+                <div id="bombNodeImage"> </div> Bomb Node
+              </div>
+              <div id="alignHelperDiv">
+                <div id="shortestPathImage"> </div>Shortest Path Node
+              </div>
+              {/* </p> */}
+            </div>
             <strong style={myStyle}>{centerText}</strong>
           </div>
           <div id="gridContent">
