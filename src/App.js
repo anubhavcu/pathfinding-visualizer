@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-
+import {
+  Route,
+  NavLink,
+  BrowserRouter as Router,
+  Switch
+} from "react-router-dom";
+import Demo from "./animations/Demo";
 import PathfindingVisualizer from "./PathfindingVisualizer/PathfindingVisualizer";
 import NavBar from "./PathfindingVisualizer/NavBar";
 import "./App.css";
@@ -889,6 +895,7 @@ export class App extends Component {
     for (let k = 0; k < buttons.length; k++) {
       buttons[k].disabled = true;
     }
+    // document.getElementById("demo-button").disabled = true;
   };
   reEnableButtons = () => {
     const buttons = document.getElementsByClassName("btn");
@@ -900,10 +907,8 @@ export class App extends Component {
     if (bombNode.status) {
       document.getElementById("add-bomb-button").disabled = true;
     }
+    // document.getElementById("demo-button").disabled = false;
   };
-  // myfunc = () => {
-  //   return "Select an algorithm to visulize it "
-  // }
   render() {
     const myStyle = {
       color: "black",
@@ -918,33 +923,46 @@ export class App extends Component {
     };
 
     return (
-      <div className="App" id="mainContent">
-        <div id="navBarContent">
-          <NavBar
-            visualizeDijkstra={() => this.visualizeDijkstra()}
-            visualizeAstar={() => this.visualizeAstar()}
-            clearBoard={() => this.clearBoard()}
-            clearPath={() => this.clearPath()}
-            addBomb={() => this.addBomb()}
-            removeBomb={() => this.removeBomb()}
-            genRandomWalls={() => this.genRandomWalls()}
-            visualizeRecursiveDivision={() => this.visualizeRecursiveDivision()}
-            visualizeStaircase={() => this.visualizeStaircase()}
-            visualizeMazeThree={() => this.visualizeMazeThree()}
-            visualizeMazeFour={() => this.visualizeMazeFour()}
-          />
-        </div>
-        <div id="textContent">
-          <strong style={myStyle}>{centerText}</strong>
-        </div>
-        <div id="gridContent">
-          <PathfindingVisualizer
-            grid={this.state.grid}
-            mouseIsPressed={this.state.mouseIsPressed}
-            handleMouseUp={(row, col) => this.handleMouseUp(row, col)}
-            handleMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-            handleMouseDown={(row, col) => this.handleMouseDown(row, col)}
-          />
+      <div>
+        <div className="App" id="mainContent">
+          <div id="navBarContent">
+            <NavBar
+              visualizeDijkstra={() => this.visualizeDijkstra()}
+              visualizeAstar={() => this.visualizeAstar()}
+              clearBoard={() => this.clearBoard()}
+              clearPath={() => this.clearPath()}
+              addBomb={() => this.addBomb()}
+              removeBomb={() => this.removeBomb()}
+              genRandomWalls={() => this.genRandomWalls()}
+              visualizeRecursiveDivision={() =>
+                this.visualizeRecursiveDivision()
+              }
+              visualizeStaircase={() => this.visualizeStaircase()}
+              visualizeMazeThree={() => this.visualizeMazeThree()}
+              visualizeMazeFour={() => this.visualizeMazeFour()}
+            />
+          </div>
+          <div id="textContent">
+            <NavLink activeClassName="active" to="/demo">
+              <button
+                class="btn btn-light btn-lg"
+                style={{ float: "left" }}
+                id="demo-button"
+              >
+                Quick Demo
+              </button>
+            </NavLink>
+            <strong style={myStyle}>{centerText}</strong>
+          </div>
+          <div id="gridContent">
+            <PathfindingVisualizer
+              grid={this.state.grid}
+              mouseIsPressed={this.state.mouseIsPressed}
+              handleMouseUp={(row, col) => this.handleMouseUp(row, col)}
+              handleMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
+              handleMouseDown={(row, col) => this.handleMouseDown(row, col)}
+            />
+          </div>
         </div>
       </div>
     );

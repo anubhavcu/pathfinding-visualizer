@@ -7,23 +7,23 @@ export function mazeFour(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
   }
   // outer rectanlge
   //up
-  for (let i = 1; i < col - 1; i++) {
+  for (let i = 0; i < col; i++) {
     nodes.push(grid[0][i]);
   }
   //bottom
-  for (let i = 1; i < col - 1; i++) {
+  for (let i = 0; i < col; i++) {
     nodes.push(grid[row - 1][i]);
   }
   //left
-  for (let i = 1; i < row - 1; i++) {
+  for (let i = 0; i < row - 1; i++) {
     nodes.push(grid[i][1]);
   }
   //right
-  for (let i = 1; i < row - 1; i++) {
+  for (let i = 0; i < row - 1; i++) {
     nodes.push(grid[i][col - 2]);
   }
   let x = 0;
-  let y = 0;
+  let y = 1;
   let w = 10;
   // const col = NUMBER_OF_COLS;
   while (w) {
@@ -34,7 +34,7 @@ export function mazeFour(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
       nodes.push(grid[i][x]);
       x += 1;
     }
-    for (let i = 2; i <= row - 1; i++) {
+    for (let i = 0; i <= row - 1; i++) {
       if (i === Math.floor((row - 2) / 4)) continue;
       if (i === Math.floor((row - 2) / 1.2)) continue;
 
@@ -48,7 +48,7 @@ export function mazeFour(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
       nodes.push(grid[i][x]);
       x += 1;
     }
-    for (let i = row - 3; i > 1; i--) {
+    for (let i = row - 3; i > 0; i--) {
       if (i === Math.floor((row - 2) / 2)) continue;
       if (i === Math.floor((row - 2) / 1.2)) continue;
 
