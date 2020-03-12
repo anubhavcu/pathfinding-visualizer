@@ -1,0 +1,109 @@
+#visualizePathButton {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 100px;
+  /* background-color: yellow; */
+  padding: 10px;
+  font-size: 20px;
+  float: left;
+  background-color: #c2b720;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Arial;
+  font-size: 20px;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-animation: glowing 1500ms 2;
+  -moz-animation: glowing 1500ms 2;
+  -o-animation: glowing 1500ms 2;
+  animation: glowing 1500ms 2;
+}
+/* keeping the animations for infinity is changing color of button to red  */
+@-webkit-keyframes glowing {
+  0% {
+    background-color: #c2b720;
+    -webkit-box-shadow: 0 0 3px #c2b720;
+  }
+  50% {
+    background-color: #c2b720;
+    -webkit-box-shadow: 0 0 40px #c2b720;
+  }
+  100% {
+    background-color: #c2b720;
+    -webkit-box-shadow: 0 0 3px #c2b720;
+  }
+}
+
+@-moz-keyframes glowing {
+  0% {
+    background-color: #c2b720;
+    -moz-box-shadow: 0 0 3px #c2b720;
+  }
+  50% {
+    background-color: #c2b720;
+    -moz-box-shadow: 0 0 40px #c2b720;
+  }
+  100% {
+    background-color: #c2b720;
+    -moz-box-shadow: 0 0 3px #c2b720;
+  }
+}
+
+@-o-keyframes glowing {
+  0% {
+    background-color: #c2b720;
+    box-shadow: 0 0 3px #c2b720;
+  }
+  50% {
+    background-color: #c2b720;
+    box-shadow: 0 0 40px #c2b720;
+  }
+  100% {
+    background-color: #c2b720;
+    box-shadow: 0 0 3px #c2b720;
+  }
+}
+
+@keyframes glowing {
+  0% {
+    background-color: #c2b720;
+    box-shadow: 0 0 3px #c2b720;
+  }
+  50% {
+    background-color: #c2b720;
+    box-shadow: 0 0 40px #c2b720;
+  }
+  100% {
+    background-color: #c2b720;
+    box-shadow: 0 0 3px #c2b720;
+  }
+}
+#drawingWallsImage {
+  /* orig. size- 1072*646 (w*h) */
+  background-image: url("./drawingWalls.gif");
+  width: 550px;
+  height: 450px;
+}
+#selectAlgorithmImage {
+  /* orig size 876*378  */
+  background-image: url("./clickOnAlgorithm_1.gif");
+  width: 600px;
+  height: 378px;
+}
+#path1SampleImage {
+  /* 998 * 618 */
+  background-image: url("./pathSample1.gif");
+  width: 900px;
+  height: 500px;
+}
+#wallNodeImage {
+  /* 998 * 618 */
+  background-image: url("./wallNode.png");
+  width: 30px;
+  height: 30px;
+}

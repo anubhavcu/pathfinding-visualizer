@@ -895,7 +895,6 @@ export class App extends Component {
     for (let k = 0; k < buttons.length; k++) {
       buttons[k].disabled = true;
     }
-    // document.getElementById("demo-button").disabled = true;
   };
   reEnableButtons = () => {
     const buttons = document.getElementsByClassName("btn");
@@ -907,7 +906,6 @@ export class App extends Component {
     if (bombNode.status) {
       document.getElementById("add-bomb-button").disabled = true;
     }
-    // document.getElementById("demo-button").disabled = false;
   };
   render() {
     const myStyle = {

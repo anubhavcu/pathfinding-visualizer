@@ -50,11 +50,12 @@
   padding: 5px 10px;
   text-align: center;
   text-decoration: none;
-  -webkit-animation: glowing 1500ms infinite;
-  -moz-animation: glowing 1500ms infinite;
-  -o-animation: glowing 1500ms infinite;
-  animation: glowing 1500ms infinite;
+  -webkit-animation: glowing 1500ms 2;
+  -moz-animation: glowing 1500ms 2;
+  -o-animation: glowing 1500ms 2;
+  animation: glowing 1500ms 2;
 }
+/* removing animations as it was lagging creating walls  */
 @-webkit-keyframes glowing {
   0% {
     background-color: #b20000;
