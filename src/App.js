@@ -622,6 +622,7 @@ export class App extends Component {
     document.getElementById("add-bomb-button").disabled = true;
   };
   removeBomb = () => {
+    this.clearPath();
     document.getElementById("add-bomb-button").disabled = false;
 
     centerText =
