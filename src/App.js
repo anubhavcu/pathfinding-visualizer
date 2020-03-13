@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import {
   Route,
   NavLink,
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
+  HashRouter as Router,
   Switch
 } from "react-router-dom";
 import Demo from "./animations/Demo";

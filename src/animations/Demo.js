@@ -3,7 +3,8 @@ import "./demo.css";
 import {
   Route,
   NavLink,
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
+  HashRouter as Router,
   Switch
 } from "react-router-dom";
 class Demo extends React.Component {

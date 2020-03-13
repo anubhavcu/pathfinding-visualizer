@@ -3,7 +3,8 @@ import ReactDOM from "react-dom";
 import {
   Route,
   NavLink,
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
+  HashRouter as Router,
   Switch
 } from "react-router-dom";
 import "./index.css";
