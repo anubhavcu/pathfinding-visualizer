@@ -19,16 +19,16 @@ class Demo extends React.Component {
           <div id="header">
             <h1 style={{ backgroundColor: "lightblue" }}>
               How to use this tool ?
-              <small class="text-muted">..and what the heck is A* ??</small>
+              <small className="text-muted">..and what the heck is A* ??</small>
             </h1>
             <blockquote
-              class="blockquote text-center font-italic font-weight-bold"
+              className="blockquote text-center font-italic font-weight-bold"
               style={{ backgroundColor: "ghostwhite" }}
             >
-              <p class="mb-0">
+              <p className="mb-0">
                 Shortest Distance between two points is a straight line.
               </p>
-              <footer class="blockquote-footer">
+              <footer className="blockquote-footer">
                 <cite title="Source Title">Archimedes</cite>
               </footer>
             </blockquote>
@@ -37,12 +37,10 @@ class Demo extends React.Component {
               <NavLink activeClassName="active" to="/article">
                 Click Here
               </NavLink>{" "}
-              if you want to learn more about algorithms ..
+              if you want to learn more about path finding algorithms ..
             </h5>
           </div>
-          {/* <h1>How to use visualization tool</h1> */}
           <div id="parentInfoDiv">
-            {/* <p> */}
             <div id="alignHelperDiv">
               <div id="wallNodeImage"> </div> Wall Node
             </div>
@@ -67,7 +65,6 @@ class Demo extends React.Component {
             <div id="alignHelperDiv">
               <div id="shortestPathImage"> </div>Shortest Path Node
             </div>
-            {/* </p> */}
           </div>
           <div id="listItems">
             <ul className="list-group">
@@ -132,9 +129,7 @@ class Demo extends React.Component {
                 <div id="sample01"></div>
               </li>
               <li className="list-group-item">
-                <h6>
-                  {/* <strong>Here are few sample snippets ...</strong> */}
-                </h6>
+                <h6></h6>
                 <div id="sample02"></div>
               </li>
             </ul>

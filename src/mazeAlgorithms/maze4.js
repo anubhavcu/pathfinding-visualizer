@@ -25,7 +25,6 @@ export function mazeFour(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
   let x = 0;
   let y = 1;
   let w = 10;
-  // const col = NUMBER_OF_COLS;
   while (w) {
     for (let i = row - 1; i >= 1; i--) {
       if (i === Math.floor((row - 2) / 4)) continue;

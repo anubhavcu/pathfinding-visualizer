@@ -10,16 +10,11 @@ import PathfindingVisualizer from "./PathfindingVisualizer/PathfindingVisualizer
 import NavBar from "./PathfindingVisualizer/NavBar";
 import "./App.css";
 import { dijkstra, getNodesInShortestPathOrder } from "./algorithms/dijkstra";
-// import {
-//   dijkstraToBomb,
-//   getNodesInShortestPathOrderWithBomb
-// } from "./algorithms/dijkstraWithBomb";
 import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
 import { recursiveDivision } from "./mazeAlgorithms/recursiveDivision";
 import { staircaseMaze } from "./mazeAlgorithms/staircaseMaze";
 import { mazeThree } from "./mazeAlgorithms/maze3";
 import { mazeFour } from "./mazeAlgorithms/maze4";
-// import { staircaseMaze } from "./mazeAlgorithms/staircase";
 let centerText =
   "Click and drag mouse on the grid to draw obstacles(or select from different mazes), then click on the algorithm to find the shortest path ;) (try adding a bomb also...)";
 let NUMBER_OF_ROWS = 22,
@@ -43,7 +38,6 @@ let bombNode = {
   col: BOMB_NODE_COL,
   status: false
 };
-// let bomb = false;
 let draggingStart = false,
   draggingFinish = false,
   draggingBomb = false;
@@ -73,9 +67,7 @@ export class App extends Component {
   }
   componentDidMount() {
     this.getWindowSize();
-
     const grid = this.getInitialGrid();
-    // console.log(grid);
     this.setState({ grid });
   }
   //mouse is pressed and not lifted up
@@ -119,7 +111,6 @@ export class App extends Component {
       const newGrid = this.getNewGridWithWallToggled(this.state.grid, row, col);
       this.setState({ grid: newGrid, mouseIsPressed: true });
     }
-    // console.log(node.row === startNode.row && node.col === startNode.col);
   };
   //hovering over an element
   //we want walls to be created when mouse is pressed and then dragged
@@ -150,7 +141,6 @@ export class App extends Component {
         col
       );
       this.setState({ grid: newGrid });
-      // draggingStart = false;
     } else if (draggingFinish) {
       const newGrid = this.getNewGridWithFinishNodeToggled(
         this.state.grid,
@@ -158,7 +148,6 @@ export class App extends Component {
         col
       );
       this.setState({ grid: newGrid });
-      // draggingFinish = false;
     } else if (draggingBomb) {
       const newGrid = this.getNewGridWithBombNodeToggled(
         this.state.grid,
@@ -174,18 +163,8 @@ export class App extends Component {
     draggingBomb = false;
   };
   getNewGridWithBombNodeToggled = (grid, row, col) => {
-    // let element1 = document.getElementById(`node-${row}-${col}`);
-    // element1.addEventListener("dragstart", () => {
-    //   element1.onDragStart = function(evt) {
-    //     element1.selected(evt);
-    //     prevX = evt.clientX;
-    //     prevY = evt.clientY;
-    //     evt.originalEvent.dataTransfer.setDragImage(null, 0, 0); // add this line
-    //   };
-    // });
     bombNode.row = row;
     bombNode.col = col;
-    // console.log(this.state.mouseIsPressed);
     const newGrid = grid.slice();
     const node = newGrid[row][col];
     const newNode = {
@@ -197,9 +176,7 @@ export class App extends Component {
       `node-${bombNode.row}-${bombNode.col}`
     );
 
-    // const elementNew = document.getElementById(`node-${newNode.row}-${newNode.col}`)
     element.classList.remove("node-bomb");
-    // element.classList.remove("node-wall");
     newGrid[row][col] = newNode;
     //adding className to new node (was working fine without this also), check it later
     // const newElement = document.getElementById(
@@ -225,8 +202,6 @@ export class App extends Component {
       //distance setting to infinity not working, alternative is clearPath function
     };
     newGrid[row][col] = newNode;
-    // startNode.row = row;
-    // startNode.col = col;
     return newGrid;
   };
   getNewGridWithFinishNodeToggled = (grid, row, col) => {
@@ -238,11 +213,8 @@ export class App extends Component {
       ...node,
       isFinish: !node.isFinish,
       isWall: false
-      // distance: Infinity
     };
     newGrid[row][col] = newNode;
-    // finishNode.row = row;
-    // finishNode.col = col;
     return newGrid;
   };
   //changing the wall state
@@ -254,11 +226,9 @@ export class App extends Component {
     const newNode = {
       ...node,
       isWall: !node.isWall
-      // isBomb: node.isBomb
     };
     newGrid[row][col] = newNode;
     return newGrid;
-    // }
   };
   getInitialGrid = () => {
     let grid = [];
@@ -282,8 +252,6 @@ export class App extends Component {
       isWall: false,
       previousNode: null,
       isBomb: false
-      // isBomb: row === BOMB_NODE_ROW && col === BOMB_NODE_COL
-      // isBomb: this.bombNode.status
     };
   };
 
@@ -314,7 +282,6 @@ export class App extends Component {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-visited";
         }
-        // bomb();
       }, 10 * i);
     }
   };
@@ -328,9 +295,6 @@ export class App extends Component {
         element.classList.remove("node-left-arrow");
         element.classList.remove("node-up-arrow");
         element.classList.remove("node-down-arrow");
-        // if (node === finishNode) {
-        //   element.className = "node node-finish";
-        // }
       }
     }
   };
@@ -462,26 +426,14 @@ export class App extends Component {
     this.clearPath();
     this.disableButtons();
     this.disableGrid();
-    // console.log(startNode, finishNode);
     const { grid } = this.state;
     let bombIsPresent = false;
-    // let bombNode;
-    // for (const row of grid) {
-    //   for (const node of row) {
-    //     if (node.isBomb) {
-    //       bombIsPresent = true;
-    //     }
-    //   }
-    // }
     if (bombNode.status) {
       bombIsPresent = true;
     }
-    console.log("dijkstra'", bombIsPresent);
     const finish = grid[finishNode.row][finishNode.col];
     if (!bombIsPresent) {
-      // const startNode = grid[START_NODE_ROW][START_NODE_COL];
       const start = grid[startNode.row][startNode.col];
-      // const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
       const visitedNodesInOrder = dijkstra(grid, start, finish);
       const nodesInShortestPathOrder = getNodesInShortestPathOrder(finish);
       this.animateDijsktra(
@@ -509,18 +461,14 @@ export class App extends Component {
     this.removeBomb();
     const { grid } = this.state;
     const newGrid = grid.slice();
-    // console.log(newGrid[startNode.row][startNode.col]);
     for (let i = 0; i < newGrid.length; i++) {
       for (let j = 0; j < newGrid[i].length; j++) {
-        // console.log(newGrid[i][j]);
         const element = document.getElementById(`node-${i}-${j}`);
         element.classList.remove("node-visited");
         element.classList.remove("node-shortest-path");
-        // element.classList.remove("node-visiting-bomb");
         element.classList.remove("node-bomb-visited");
         //clearing class node-wall is optional(working fine otherwise also)
         element.classList.remove("node-wall");
-
         newGrid[i][j].isVisited = false;
         newGrid[i][j].distance = Infinity;
         newGrid[i][j].isWall = false;
@@ -529,22 +477,8 @@ export class App extends Component {
     }
     this.setState({ grid: newGrid });
   };
-  // restoreImages = () => {
-  //   const { grid } = this.state;
-  //   let newGrid = grid.slice();
-  //   for (const row of grid) {
-  //     for (const node of row) {
-  //       const newNode = node;
-  //       newGrid[node] = newNode;
-  //     }
-  //   }
-  //   this.setState({ grid: newGrid });
-  //   console.log(grid);
-  //   console.log(newGrid);
-  // };
   clearPath = () => {
     this.removeArrowClass();
-    // this.restoreImages();
     const { grid } = this.state;
     const newGrid = grid.slice();
     // console.log(newGrid[startNode.row][startNode.col]);
@@ -586,7 +520,6 @@ export class App extends Component {
         if (!(node.isStart || node.isFinish || node.isBomb)) {
           document.getElementById(`node-${node.row}-${node.col}`).className =
             "node node-visited";
-          // this.persistColor();
         }
       }, 10 * i);
     }
@@ -609,8 +542,6 @@ export class App extends Component {
             ...newNodesInShortestPathOrder0,
             ...nodesInShortestPathOrder1
           ];
-          // console.log("shortest path", nodesInShortestPathOrder);
-
           this.animateAstar(
             visitedNodesInOrder,
             nodesInShortestPathOrder1,
@@ -639,24 +570,14 @@ export class App extends Component {
     this.clearPath();
     const { grid } = this.state;
     let bombIsPresent = false;
-    // let bombNode;
-    // for (const row of grid) {
-    //   for (const node of row) {
-    //     if (node.isBomb) {
-    //       bombIsPresent = true;
-    //     }
-    //   }
-    // }
     if (bombNode.status) {
       bombIsPresent = true;
     }
-    console.log(bombIsPresent);
     const start = grid[startNode.row][startNode.col];
     const finish = grid[finishNode.row][finishNode.col];
     if (!bombIsPresent) {
       const visitedNodesInOrder = astar(grid, start, finish);
       const nodesInShortestPathOrder = getNodesInShortestPathOrderAstar(finish);
-      // console.log(nodesInShortestPathOrder);
       this.animateAstar(
         visitedNodesInOrder,
         nodesInShortestPathOrder,
@@ -739,10 +660,6 @@ export class App extends Component {
     let nodes = [];
     for (const row of grid) {
       for (const node of row) {
-        // if (node !== bombNode && node !== finishNode && node !== startNode) {
-        //   nodes.push(node);
-        // }
-
         if (
           !(
             (node.row === bombNode.row && node.col === bombNode.col) ||
@@ -755,7 +672,6 @@ export class App extends Component {
       }
     }
     let numberOfPlainNodes = nodes.length;
-    // let x = 200,
     let x = Math.floor((40 / 100) * numberOfPlainNodes),
       random = this.genRandomNumber();
     //some kind of error with genRandomWall function, to ignore it following two if statements are there, check later if problem persists "cannot read property nodes[random].isWall of unknown"
@@ -910,7 +826,6 @@ export class App extends Component {
   render() {
     const myStyle = {
       color: "black",
-      // backgroundColor: "lightblue",
       backgroundColor: "ghostwhite",
       padding: "0.5px",
       fontFamily: "Arial",
@@ -944,16 +859,14 @@ export class App extends Component {
           <div id="textContent">
             <NavLink activeClassName="active" to="/demo">
               <button
-                class="btn btn-light btn-lg"
+                className="btn btn-light btn-lg"
                 style={{ float: "left" }}
                 id="demo-button"
               >
                 Quick Demo
               </button>
             </NavLink>
-            {/* demo css effect is shown here .idk how? */}
             <div style={myStyle}>
-              {/* <p> */}
               <div id="alignHelperDiv">
                 <div id="wallNodeImage"> </div> Wall Node
               </div>
@@ -978,7 +891,6 @@ export class App extends Component {
               <div id="alignHelperDiv">
                 <div id="shortestPathImage"> </div>Shortest Path Node
               </div>
-              {/* </p> */}
             </div>
             <strong style={myStyle}>{centerText}</strong>
           </div>

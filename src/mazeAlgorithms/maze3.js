@@ -1,9 +1,7 @@
 export function mazeThree(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
   let nodes = [];
-  // let x = 1;
   const row = NUMBER_OF_ROWS;
   const col = NUMBER_OF_COLS;
-  // let w = 4;
   for (let i = Math.floor(row / 1.8); i < Math.floor(row / 2.8); i++) {
     nodes.push(grid[i][Math.floor(col / 3)]);
   }
@@ -54,18 +52,5 @@ export function mazeThree(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
       nodes.push(grid[i][q]);
     }
   }
-
-  // for (let i = Math.floor(row / 1.8); i < Math.floor(row / 2.8); i++) {
-  //   nodes.push(grid[i][Math.floor(col / 3)]);
-  // }
-  //   w -= 1;
-  // }
-  // up,right,down,right lines & then repeat w times
-  // while (w) {
-  //   for(let i = 2; i< 8;i++){
-
-  //   }
-  // w -= 1;
-  // }
   return nodes;
 }

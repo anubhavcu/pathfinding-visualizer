@@ -8,23 +8,16 @@ export function astar(grid, startNode, finishNode) {
   startNode.distance = 0;
   addHeuristicDistanceToNodes(grid, startNode, finishNode);
   const unvisitedNodes = getAllNodes(grid);
-  // console.log(unvisitedNodes);
   while (unvisitedNodes.length) {
     sortNodesByTotalDistance(unvisitedNodes);
-
     const closestNode = unvisitedNodes.shift();
-    // console.log(closestNode);
     if (closestNode.isWall) continue;
     if (closestNode.distance === Infinity) return visitedNodesInOrder;
 
     closestNode.isVisited = true;
     visitedNodesInOrder.push(closestNode);
     if (closestNode === finishNode) return visitedNodesInOrder;
-
-    // console.log(closestNode);
     updateUnvisitedNeighbors(closestNode, grid);
-
-    // console.log(unvisitedNodes);
   }
 }
 function setAllDistanceToInfinity(grid) {
@@ -33,8 +26,6 @@ function setAllDistanceToInfinity(grid) {
       node.distance = Infinity;
       node.isVisited = false;
       node.previousNode = null;
-      // const element = document.getElementById(`node-${node.row}-${node.col}`);
-      // element.classList.remove("node-bomb-visited");
     }
   }
 }

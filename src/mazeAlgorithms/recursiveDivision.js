@@ -3,7 +3,6 @@ export function recursiveDivision(grid, NUMBER_OF_ROWS, NUMBER_OF_COLS) {
   let nodes = [];
   let x = 1;
   const row = NUMBER_OF_ROWS;
-  // const col = NUMBER_OF_COLS;
   let w = 10;
   // up,right,down,right lines & then repeat w times
   while (w) {
