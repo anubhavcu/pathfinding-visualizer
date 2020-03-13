@@ -35,6 +35,13 @@ const routing = (
       <Switch>
         <Route exact path="/" component={App} />
         <Route path="/demo" component={Demo} />
+        <Route
+          path="/article"
+          component={() => {
+            window.location.href = "https://en.wikipedia.org/wiki/Pathfinding";
+            return null;
+          }}
+        />
         <Route component={NotFound} />
       </Switch>
       {/* <hr /> */}
