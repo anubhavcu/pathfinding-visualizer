@@ -1,14 +1,14 @@
-//similar to dijkstra's algorithms but we also calculate the heuristic distance of each node to select the best node to reach the finish node
-//f = g + h ; g= distance from startNode; h=heuristic distance(estimated distance to finish node)
-// With A*,we see that once we get past the obstacle, the algorithm prioritizes the node with the lowest f and the ‘best’ chance of reaching the end.
 export function astar(grid, startNode, finishNode) {
   setAllDistanceToInfinity(grid);
-
+  // console.log(startNode, finishNode);
+  // console.log(grid);
   const visitedNodesInOrder = [];
   startNode.distance = 0;
-  // addXandYvaluesToNodes(grid, startNode, finishNode);
+  fillXandYCordinates(grid, startNode, finishNode);
   addHeuristicDistanceToNodes(grid, startNode, finishNode);
   const unvisitedNodes = getAllNodes(grid);
+  console.log(grid);
+  console.log(startNode, finishNode);
   while (unvisitedNodes.length) {
     sortNodesByTotalDistance(unvisitedNodes);
     const closestNode = unvisitedNodes.shift();
@@ -20,6 +20,22 @@ export function astar(grid, startNode, finishNode) {
     if (closestNode === finishNode) return visitedNodesInOrder;
     updateUnvisitedNeighbors(closestNode, grid);
   }
+}
+function fillXandYCordinates(grid, startNode, finishNode) {
+  // let maxX = grid.length - 1;
+  // let maxY = grid[0].length - 1;
+  let xValue = 0,
+    yValue = 0;
+  for (let i = grid.length; i > 0; i--) {
+    xValue = 0;
+    for (let j = 0; j < grid[0].length; j++) {
+      grid[i - 1][j].x = xValue;
+      grid[i - 1][j].y = yValue;
+      xValue += 1;
+    }
+    yValue += 1;
+  }
+  // console.log(grid);
 }
 function setAllDistanceToInfinity(grid) {
   for (const row of grid) {
@@ -33,12 +49,34 @@ function setAllDistanceToInfinity(grid) {
 //same as dijkstra that we update the distance of neighbouring nodes by +1 and also we compute total distance as distance + heuristic distance
 function updateUnvisitedNeighbors(node, grid) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
+  // calculateManhattanDistance(unvisitedNeighbors, grid);
   // console.log(unvisitedNeighbors);
   for (let neighbor of unvisitedNeighbors) {
     neighbor.distance = node.distance + 1;
-    neighbor.totalDistance = node.distance + 1 + neighbor.heuristicDistance;
+    neighbor.totalDistance = node.distance + neighbor.heuristicDistance;
 
     neighbor.previousNode = node;
+  }
+}
+function calculateManhattanDistance(unvisitedNeighbors, grid) {
+  let finishNode;
+  let startNode;
+  for (let row of grid) {
+    for (let node of row) {
+      if (node.isStart) {
+        startNode = node;
+      }
+      if (node.isFinish) {
+        finishNode = node;
+      }
+    }
+  }
+  for (let neighbor of unvisitedNeighbors) {
+    let dx = Math.abs(neighbor.x - finishNode.x);
+    let dy = Math.abs(neighbor.y - finishNode.y);
+    let dxy = dx + dy;
+    neighbor.manhattanDistance = dxy;
+    neighbor.totalDistance = neighbor.distance + neighbor.manhattanDistance;
   }
 }
 function getUnvisitedNeighbors(node, grid) {
@@ -48,48 +86,31 @@ function getUnvisitedNeighbors(node, grid) {
   if (row < grid.length - 1) neighbors.push(grid[row + 1][col]);
   if (col > 0) neighbors.push(grid[row][col - 1]);
   if (col < grid[0].length - 1) neighbors.push(grid[row][col + 1]);
-  //  // diagnal elements
-  // // top-right
-  // if (row > 0 && col < grid[0].length - 1)
-  //   neighbors.push(grid[row - 1][col + 1]);
-  // // bottom-right
-  //  if (row < grid.length - 1 && col < grid[0].length - 1)
-  //   neighbors.push(grid[row + 1][col + 1]);
-  // // bottom-left
-  // if (row < grid.length - 1 && col > 0) neighbors.push(grid[row + 1][col - 1]);
-  // // top-left
-  // if (row > 0 && col > 0) neighbors.push(grid[row - 1][col - 1]);
-
   return neighbors.filter(neighbor => !neighbor.isVisited);
 }
 function sortNodesByTotalDistance(unvisitedNodes) {
   unvisitedNodes.sort(
     (nodeA, nodeB) => nodeA.totalDistance - nodeB.totalDistance
+    // (nodeA, nodeB) => nodeA.distance - nodeB.distance
+    // (nodeA, nodeB) => nodeA.heuristicDistance - nodeB.heuristicDistance
   );
 }
-// function addXandYvaluesToNodes(grid, startNode, finishNode) {
-//   // const nodes = [];
-//   let i = grid.length - 1;
-//   let j = 0;
-//   for (const row of grid) {
-//     for (const node of row) {
-//       node.x = i;
-//       node.y = j++;
-//     }
-//     i -= 1;
-//     j = 0;
-//   }
-// }
 function addHeuristicDistanceToNodes(grid, startNode, finishNode) {
   for (const row of grid) {
     for (const node of row) {
-      const a = Math.abs(finishNode.col - node.col);
-      const b = Math.abs(finishNode.row - node.row);
-      const h = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+      // const a = Math.abs(finishNode.col - node.col);
+      const a = Math.abs(finishNode.x - node.x);
+      // const b = Math.abs(finishNode.row - node.row);
+      const b = Math.abs(finishNode.y - node.y);
+
+      // const h = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+      const h = Math.abs(a + b);
       //adding random value to h to enhace the value of heuristic distance
       //if we enhanced the value too much(i.e multiply by 5/10/100, shortest path will be more strict, i.e it would choose a deviated path instead of straight line. therefore some average value is added or multiplied
-      node.heuristicDistance = h + 1000;
-      node.totalDistance = node.distance + node.heuristicDistance;
+      // node.heuristicDistance = h + 1000;
+      node.heuristicDistance = h * 1.00001;
+
+      node.totalDistance = Math.floor(node.distance + node.heuristicDistance);
     }
   }
 }
@@ -107,7 +128,6 @@ function getAllNodes(grid) {
 export function getNodesInShortestPathOrderAstar(finishNode) {
   const nodesInShortestPathOrder = [];
   let currentNode = finishNode;
-  //current node will be null it is equal to startNode
   while (currentNode !== null) {
     nodesInShortestPathOrder.unshift(currentNode);
     currentNode = currentNode.previousNode;

@@ -11,7 +11,10 @@ import PathfindingVisualizer from "./PathfindingVisualizer/PathfindingVisualizer
 import NavBar from "./PathfindingVisualizer/NavBar";
 import "./App.css";
 import { dijkstra, getNodesInShortestPathOrder } from "./algorithms/dijkstra";
-import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
+// import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar";
+// import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/newAstar";
+import { astar, getNodesInShortestPathOrderAstar } from "./algorithms/astar1";
+
 import { recursiveDivision } from "./mazeAlgorithms/recursiveDivision";
 import { staircaseMaze } from "./mazeAlgorithms/staircaseMaze";
 import { mazeThree } from "./mazeAlgorithms/maze3";
