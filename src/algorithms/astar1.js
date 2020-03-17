@@ -1,4 +1,5 @@
 export function astar(grid, startNode, finishNode) {
+  setAllDistanceToInfinity(grid);
   const visitedNodesInOrder = [];
   startNode.distance = 0;
   fillXandYCordinates(grid, startNode, finishNode);
@@ -26,6 +27,15 @@ function updateUnvisitedNeighbors(node, grid) {
     neighbor.totalDistance = neighbor.distance + neighbor.heuristicDistance;
 
     neighbor.previousNode = node;
+  }
+}
+function setAllDistanceToInfinity(grid) {
+  for (const row of grid) {
+    for (const node of row) {
+      node.distance = Infinity;
+      node.isVisited = false;
+      node.previousNode = null;
+    }
   }
 }
 function getUnvisitedNeighbors(node, grid) {
