@@ -60,7 +60,7 @@ export class App extends Component {
     START_NODE_COL = Math.floor(NUMBER_OF_COLS / 6);
     FINISH_NODE_ROW = Math.floor(NUMBER_OF_ROWS / 2);
     FINISH_NODE_COL = Math.floor(NUMBER_OF_COLS / 1.15);
-    BOMB_NODE_ROW = Math.floor(NUMBER_OF_ROWS / 1.2);
+    BOMB_NODE_ROW = Math.floor(NUMBER_OF_ROWS / 4.2);
     BOMB_NODE_COL = Math.floor(NUMBER_OF_COLS / 2.2);
     startNode.row = START_NODE_ROW;
     startNode.col = START_NODE_COL;
